@@ -27,7 +27,7 @@
 
 typedef struct
 {
-	enum STATES balancer_state;
+	state balancer_state;
 	Bool initialized;
 } balancer_state_t;
 
@@ -71,40 +71,34 @@ Void StateChangeTask()
 	UInt events;
 	while (TRUE)
 	{
-		events = Event_pend(StateChangeEvent, Event_Id_NONE, ALL_EVENTS, BIOS_WAIT_FOREVER);
+		events = Event_pend(StateChangeEvent, Event_Id_NONE, ALL_STATE_EVENTS, BIOS_WAIT_FOREVER);
 
 		// Determine event posted
 		if (events & ERROR_EVENT)
 		{
 			SetState(ERROR);
 			// Go into error state
-			return;
 		}
 		else if (events & WAIT_EVENT)
 		{
 			SetState(WAIT);
-			return;
 		}
 		else if (events & CHARGE_EVENT)
 		{
 			// Go into charge state
 			SetState(CHARGE);
-			return;
 		}
 		else if (events & BALANCE_EVENT)
 		{
 			SetState(BALANCE);
-			return;
 		}
 		else if (events & CHARGE_BALANCE_EVENT)
 		{
 			SetState(CHARGE_BALANCE);
-			return;
 		}
 		else
 		{
 			// What event just fired? Error
-			return;
 		}
 	}
 }
