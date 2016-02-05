@@ -17,7 +17,7 @@
 // Public variables
 
 // Bitmask of states the system can be in
-typedef enum STATES
+typedef enum
 {
 	WAIT 			= 0,
 	CHARGE  		= 2,

@@ -124,6 +124,7 @@ Void HWI_Switch_Service()
 		GpioDataRegs.GPBCLEAR.bit.GPIO41 = 1;
 		GpioDataRegs.GPACLEAR.bit.GPIO11 = 1;
 		*/
+		Event_post(StateChangeEvent, BALANCE_EVENT);
 	}
 	if (GpioDataRegs.GPADAT.bit.GPIO12 == 1 &&
 			GpioDataRegs.GPADAT.bit.GPIO15 == 1)
@@ -134,6 +135,7 @@ Void HWI_Switch_Service()
 		GpioDataRegs.GPBSET.bit.GPIO41 = 1;
 		GpioDataRegs.GPACLEAR.bit.GPIO11 = 1;
 		*/
+		Event_post(StateChangeEvent, CHARGE_BALANCE_EVENT);
 	}
 }
 
