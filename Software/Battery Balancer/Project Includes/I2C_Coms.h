@@ -19,11 +19,18 @@
 //------------------------------------------------
 // Public variables
 
+typedef enum {
+	PORT_0,
+	PORT_1
+} tca9555_ports;
 
 //------------------------------------------------
 // Public functions
 Void I2C_Init();
 
+Uint8 I2C_GetPortInput(tca9555_ports port);
+
+void I2C_SetPortOutput(tca9555_ports, Uint8 output);
 
 //------------------------------------------------
 

@@ -85,11 +85,17 @@ Void Gpio_Init()
 	GpioCtrlRegs.GPAPUD.bit.GPIO15 = DISABLE_PULLUP;
 
 	// Toggle XINT1 on GPIO 12
+	/*
 	GpioIntRegs.GPIOXINT1SEL.all = 12;
 	XIntruptRegs.XINT1CR.bit.POLARITY = 1;
 	XIntruptRegs.XINT1CR.bit.ENABLE = 1;
-
+	*/
 	EDIS;
+}
+
+void HWI_Service_TCA9555(void)
+{
+	Event_post(I2C_Event, I2C_NEW_DATA_EVENT);
 }
 
 Void HWI_Switch_Service()
