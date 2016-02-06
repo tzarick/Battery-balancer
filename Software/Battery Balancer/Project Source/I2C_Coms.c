@@ -13,6 +13,7 @@
 #include "Events.h"
 #include "GPIO.h"
 #include "State.h"
+#include "Error.h"
 
 //-----------------------------------------------------------------------
 // Global variables
@@ -73,7 +74,7 @@ typedef enum {
 // Private variables
 //-----------------------------------------------------------------------
 
-static Uint8 mCurrentState;
+static i2c_states mCurrentState;
 
 static Uint8 mLastDataReceived;
 
@@ -83,13 +84,8 @@ static Uint8 mPortOutput1;
 static Uint8 mPortInput0;
 static Uint8 mPortInput1;
 
-typedef enum {
-	I2C_NOT_IN_PROGRESS = 0,
-	I2C_SENDING_READ = 1,
-	I2C_DATA_READY = 3,
-	I2C_SENDING_WRITE = 4,
-	I2C_TXN_ERROR = 5
-} i2c_states;
+static Bool mInitialized = FALSE;
+
 
 //-----------------------------------------------------------------------
 // Private (Internal) functions
@@ -163,11 +159,19 @@ Void I2C_Init()
 	// Outside module just needs to post I2C_SEND_EVENT now.
 	Event_post(I2C_Event, I2C_COMPLETE_EVENT);
 
+	mInitialized = TRUE;
 	return;
+}
+
+i2c_states I2C_GetState()
+{
+	ASSERT(mInitialized, errI2cNotInitialized);
+	return mCurrentState;
 }
 
 Uint8 I2C_GetPortInput(tca9555_ports port)
 {
+	ASSERT(mInitialized, errI2cNotInitialized);
 	if (port == PORT_0)
 	{
 		return mPortInput0;
@@ -185,6 +189,7 @@ Uint8 I2C_GetPortInput(tca9555_ports port)
 
 void I2C_SetPortOutput(tca9555_ports port, Uint8 data)
 {
+	ASSERT(mInitialized, errI2cNotInitialized);
 	if (port == PORT_0)
 	{
 		mPortOutput0 = data;
@@ -197,6 +202,13 @@ void I2C_SetPortOutput(tca9555_ports port, Uint8 data)
 	{
 		SetState(ERROR);
 	}
+}
+
+void I2C_SendOutput(void)
+{
+	ASSERT(mInitialized, errI2cNotInitialized);
+	// todo: Add assertion check
+	Event_post(I2C_Event, I2C_SEND_EVENT);
 }
 
 static void I2C_ConfigureTCA9555(void)

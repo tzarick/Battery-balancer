@@ -5,6 +5,7 @@
  *      Author: Sean Harrington
  */
 
+#include "Error.h"
 
 //-----------------------------------------------------------------------
 // Global variables
@@ -26,3 +27,7 @@
 // Public functions
 //-----------------------------------------------------------------------
 
+void Error_HandleError(errors_t error)
+{
+	// todo: Complete
+}

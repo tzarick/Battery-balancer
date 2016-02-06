@@ -17,10 +17,30 @@
 //---------------------------------------------------------------------------------
 // Public variables
 
+typedef enum {
+	errNone,
 
+	// I2C Related errors
+	errI2cNotInitialized,
+	errI2cSendOutputFail,
+	errI2cReadInputFail,
+
+	// CAN Errors
+	errCanBusError,
+	errCanRtrError,
+
+	// System Fatal Errors
+	errStackOverflow
+} errors_t;
+
+/// Calls Error_HandleError if condition is not satisfied and never returns
+#define ASSERT(condition, error)	if(!(condition)) 				\
+									{								\
+										Error_HandleError(error); 	\
+									}								\
 
 //---------------------------------------------------------------------------------
 
-
+void Error_HandleError(errors_t error);
 
 #endif /* PROJECT_INCLUDES_ERROR_H_ */
