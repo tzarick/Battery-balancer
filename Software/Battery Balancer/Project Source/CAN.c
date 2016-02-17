@@ -5,8 +5,8 @@
  *      Author: Sean Harrington
  */
 
+#include <CellStatus.h>
 #include "CAN.h"
-#include "Cell_Status.h"
 #include "DSP2803x_Device.h"
 
 //-----------------------------------------------------------------------

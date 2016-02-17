@@ -17,6 +17,12 @@
 //------------------------------------------------
 // Public variables
 
+#define BULK_CHARGE_POWER_RELAY_ON 	(GpioDataRegs.GPASET.bit.GPIO5)
+#define BULK_CHARGE_POWER_RELAY_OFF	(GpioDataRegs.GPACLEAR.bit.GPIO5)
+#define BULK_CHARGE_ENABLE 			(GpioDataRegs.GPASET.bit.GPIO11)
+#define BULK_CHARGE_DISABLE			(GpioDataRegs.GPACLEAR.bit.GPIO11)
+#define BALANCE_RELAY_ENABLE		(GpioDataRegs.GPASET.bit.GPIO9)
+#define BLANACE_RELAY_DISABLE		(GpioDataRegs.GPACLEAR.bit.GPIO9)
 
 // GPIO Expander Port 0 output pins (bitfield)
 typedef enum {
@@ -49,14 +55,8 @@ typedef enum {
 	LCD_DOWN_BUTTON	= 32,
 } expander_input_sector_2;
 
-
-
-
 Void Gpio_Init();
 
-
 //------------------------------------------------
-
-
 
 #endif /* PROJECT_INCLUDES_GPIO_H_ */

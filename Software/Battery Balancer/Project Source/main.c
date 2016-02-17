@@ -14,10 +14,12 @@
 
 #include "Initialize.h"
 #include "State.h"
+#include "I2C_Coms.h"
+#include "GPIO.h"
 
 // @todo: Document events
 
-
+static state lastState = WAIT;
 /*
  *  ======== taskFxn ========
  */
@@ -67,16 +69,65 @@ Int main()
 Void UpdateState()
 {
 	state currentState = GetState();
+	Uint8 expanderInputPort0 = I2C_GetPortInput(PORT_0);
+	Uint8 expanderInputPort1 = I2C_GetPortInput(PORT_1);
 	switch (currentState)
 	{
 		case WAIT:
-			// Check for problems.
-			// Perform wait routine here
+
+			if (expanderInputPort0 & START_BUTTON)
+			{
+				if (expanderInputPort0 & SWITCH_CHARGE_AND_BALANCE)
+				{
+					SetState(CHARGE_BALANCE);
+				}
+				else if (expanderInputPort0 & SWITCH_CHARGE)
+				{
+					// Set next state to CHARGE
+					SetState(CHARGE);
+				}
+				else
+				{
+					// Balance only mode
+					SetState(BALANCE);
+				}
+			}
 			break;
 		case CHARGE:
-			// Perform safety checks
-			// Update structures
+
+			// If switching from other state, update outputs
+			if (lastState != CHARGE)
+			{
+				I2C_SetPortOutput(PORT_0, START_INDICATOR);
+				I2C_SetPortOutput(PORT_1, CHARGE_LED_YELLOW);
+				I2C_SendOutput();
+			}
+
+			cellStatus_t status = CellStatus_WorstCellStatus();
+
+			// If cell is in critical state, go into error state
+			if (status == CELL_CRITICAL)
+			{
+				SetState(ERROR);
+				break;
+			}
+			else if (status == CELL_MAX_VOLT)
+			{
+				// Update LCD
+				SetState(WAIT);
+			}
+
+			break;
+		case BALANCE:
+			break;
+		case CHARGE_BALANCE:
+			break;
+		case ERROR:
+			// Make system safe
+
+
 			break;
 	}
+	lastState = currentState;
 }
 

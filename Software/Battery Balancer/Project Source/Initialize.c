@@ -12,10 +12,10 @@
 // Includes
 //-----------------------------------------------------------------------
 
+#include <CellStatus.h>
 #include "Initialize.h"
 #include "GPIO.h"
 #include "CAN.h"
-#include "Cell_Status.h"
 #include "I2C_Coms.h"
 
 //-----------------------------------------------------------------------
