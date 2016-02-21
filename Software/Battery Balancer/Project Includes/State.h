@@ -19,11 +19,11 @@
 // Bitmask of states the system can be in
 typedef enum
 {
-	WAIT 			= 0,
-	CHARGE  		= 2,
-	BALANCE 		= 4,
-	CHARGE_BALANCE 	= 8,
-	ERROR 			= 16
+	WAIT,
+	CHARGE,
+	BALANCE,
+	CHARGE_BALANCE,
+	ERROR
 } state;
 
 //------------------------------------------------

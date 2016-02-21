@@ -17,6 +17,7 @@
 #include "GPIO.h"
 #include "CAN.h"
 #include "I2C_Coms.h"
+#include "Timer.h"
 
 //-----------------------------------------------------------------------
 // Global variables
@@ -30,6 +31,7 @@ extern Uint16 RamfuncsLoadSize;
 
 cell_voltage Cell_Voltages[CELLS_IN_SERIES];
 
+extern struct CPUTIMER_VARS CpuTimer0;
 
 //-----------------------------------------------------------------------
 // Constants
@@ -69,13 +71,12 @@ void HardwareInit()
 	I2C_Init();
 	// @todo: CAN setup
 	CAN_Init();
-	return;
 }
 
 Void SoftwareInit()
 {
 	Cell_Voltages_Init();
-	return;
+	Timer_Init();
 }
 
 

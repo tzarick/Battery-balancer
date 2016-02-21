@@ -16,6 +16,7 @@
 #include "State.h"
 #include "I2C_Coms.h"
 #include "GPIO.h"
+#include "CellStatus.h"
 
 // @todo: Document events
 
@@ -68,6 +69,7 @@ Int main()
 
 Void UpdateState()
 {
+	cellStatus_t status;
 	state currentState = GetState();
 	Uint8 expanderInputPort0 = I2C_GetPortInput(PORT_0);
 	Uint8 expanderInputPort1 = I2C_GetPortInput(PORT_1);
@@ -103,7 +105,7 @@ Void UpdateState()
 				I2C_SendOutput();
 			}
 
-			cellStatus_t status = CellStatus_WorstCellStatus();
+			status = CellStatus_WorstCellStatus();
 
 			// If cell is in critical state, go into error state
 			if (status == CELL_CRITICAL)
@@ -125,9 +127,10 @@ Void UpdateState()
 		case ERROR:
 			// Make system safe
 
-
+			break;
+		default:
+			// Error
 			break;
 	}
 	lastState = currentState;
 }
-
