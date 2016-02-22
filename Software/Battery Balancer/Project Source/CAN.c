@@ -36,6 +36,9 @@ extern cell_voltage Cell_Voltages[CELLS_IN_SERIES];
 // Macro to set the CAN timeout register (MOTO)
 #define CAN_TIMEOUT_IN_SECS(time)  (ECanaRegs.CANTSC + SECS_TO_CAN_TICKS(time))
 
+// Value used to
+#define NO_EXTENDED_MSGID			0x40000000
+
 //-----------------------------------------------------------------------
 // Private variables
 //-----------------------------------------------------------------------
@@ -339,142 +342,142 @@ static void SetupMailboxes(void)
 {
 
 	ECanaMboxes.MBOX0.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX0.MSGID.bit.STDMSGID = (mailboxes[0].ID1_Active)
-			? mailboxes[0].ID1
-			: mailboxes[0].ID2;
+	ECanaMboxes.MBOX0.MSGID.all = (mailboxes[0].ID1_Active)
+			? (mailboxes[0].ID1 << 18)
+			: (mailboxes[0].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD0 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME0 = 1;			//enable
 	ECanaMOTORegs.MOTO0 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX1.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX1.MSGID.bit.STDMSGID = (mailboxes[1].ID1_Active)
-			? mailboxes[1].ID1
-			: mailboxes[1].ID2;
+	ECanaMboxes.MBOX1.MSGID.all = (mailboxes[1].ID1_Active)
+			? (mailboxes[1].ID1 << 18)
+			: (mailboxes[1].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD1 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME1 = 1;			//enable
 	ECanaMOTORegs.MOTO1 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX2.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX2.MSGID.bit.STDMSGID = (mailboxes[2].ID1_Active)
-			? mailboxes[2].ID1
-			: mailboxes[2].ID2;
+	ECanaMboxes.MBOX2.MSGID.all = (mailboxes[2].ID1_Active)
+			? (mailboxes[2].ID1 << 18)
+			: (mailboxes[2].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD2 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME2 = 1;			//enable
 	ECanaMOTORegs.MOTO2 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX3.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX3.MSGID.bit.STDMSGID = (mailboxes[3].ID1_Active)
-			? mailboxes[3].ID1
-			: mailboxes[3].ID2;
+	ECanaMboxes.MBOX3.MSGID.all = (mailboxes[3].ID1_Active)
+			? (mailboxes[3].ID1 << 18)
+			: (mailboxes[3].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD3 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME3 = 1;			//enable
 	ECanaMOTORegs.MOTO3 = CAN_TIMEOUT_IN_SECS(3.0);
 
 
 	ECanaMboxes.MBOX4.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX4.MSGID.bit.STDMSGID = (mailboxes[4].ID1_Active)
-			? mailboxes[4].ID1
-			: mailboxes[4].ID2;
+	ECanaMboxes.MBOX4.MSGID.all = (mailboxes[4].ID1_Active)
+			? (mailboxes[4].ID1 << 18)
+			: (mailboxes[4].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD4 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME4 = 1;			//enable
 	ECanaMOTORegs.MOTO4 = CAN_TIMEOUT_IN_SECS(3.0);
 
 
 	ECanaMboxes.MBOX5.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX5.MSGID.bit.STDMSGID = (mailboxes[5].ID1_Active)
-			? mailboxes[5].ID1
-			: mailboxes[5].ID2;
+	ECanaMboxes.MBOX5.MSGID.all = (mailboxes[5].ID1_Active)
+			? (mailboxes[5].ID1 << 18)
+			: (mailboxes[5].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD5 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME5 = 1;			//enable
 	ECanaMOTORegs.MOTO5 = CAN_TIMEOUT_IN_SECS(3.0);
 
 
 	ECanaMboxes.MBOX6.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX6.MSGID.bit.STDMSGID = (mailboxes[6].ID1_Active)
-			? mailboxes[6].ID1
-			: mailboxes[6].ID2;
+	ECanaMboxes.MBOX6.MSGID.all = (mailboxes[6].ID1_Active)
+			? (mailboxes[6].ID1 << 18)
+			: (mailboxes[6].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD6 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME6 = 1;			//enable
 	ECanaMOTORegs.MOTO6 = CAN_TIMEOUT_IN_SECS(3.0);
 
 
 	ECanaMboxes.MBOX7.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX7.MSGID.bit.STDMSGID = (mailboxes[7].ID1_Active)
-			? mailboxes[7].ID1
-			: mailboxes[7].ID2;
+	ECanaMboxes.MBOX7.MSGID.all = (mailboxes[7].ID1_Active)
+			? (mailboxes[7].ID1 << 18)
+			: (mailboxes[7].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD7 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME7 = 1;			//enable
 	ECanaMOTORegs.MOTO7 = CAN_TIMEOUT_IN_SECS(3.0);
 
 
 	ECanaMboxes.MBOX8.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX8.MSGID.bit.STDMSGID = (mailboxes[8].ID1_Active)
-			? mailboxes[8].ID1
-			: mailboxes[8].ID2;
+	ECanaMboxes.MBOX8.MSGID.all = (mailboxes[8].ID1_Active)
+			? (mailboxes[8].ID1 << 18)
+			: (mailboxes[8].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD8 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME8 = 1;			//enable
 	ECanaMOTORegs.MOTO8 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX9.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX9.MSGID.bit.STDMSGID = (mailboxes[9].ID1_Active)
-			? mailboxes[9].ID1
-			: mailboxes[9].ID2;
+	ECanaMboxes.MBOX9.MSGID.all = (mailboxes[9].ID1_Active)
+			? (mailboxes[9].ID1 << 18)
+			: (mailboxes[9].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD9 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME9 = 1;			//enable
 	ECanaMOTORegs.MOTO9 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX10.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX10.MSGID.bit.STDMSGID = (mailboxes[10].ID1_Active)
-			? mailboxes[10].ID1
-			: mailboxes[10].ID2;
+	ECanaMboxes.MBOX10.MSGID.all = (mailboxes[10].ID1_Active)
+			? (mailboxes[10].ID1 << 18)
+			: (mailboxes[10].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD10 = 1; 		//receive
 	ECanaShadow.CANME.bit.ME10 = 1;			//enable
 	ECanaMOTORegs.MOTO10 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX11.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX11.MSGID.bit.STDMSGID = (mailboxes[11].ID1_Active)
-			? mailboxes[11].ID1
-			: mailboxes[11].ID2;
+	ECanaMboxes.MBOX11.MSGID.all = (mailboxes[11].ID1_Active)
+			? (mailboxes[11].ID1 << 18)
+			: (mailboxes[11].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD11 = 1; 		//receive
 	ECanaShadow.CANME.bit.ME11 = 1;			//enable
 	ECanaMOTORegs.MOTO11 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX12.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX12.MSGID.bit.STDMSGID = (mailboxes[12].ID1_Active)
-			? mailboxes[12].ID1
-			: mailboxes[12].ID2;
+	ECanaMboxes.MBOX12.MSGID.all = (mailboxes[12].ID1_Active)
+			? (mailboxes[12].ID1 << 18)
+			: (mailboxes[12].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD12 = 1; 		//receive
 	ECanaShadow.CANME.bit.ME12 = 1;			//enable
 	ECanaMOTORegs.MOTO12 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX13.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX13.MSGID.bit.STDMSGID = (mailboxes[13].ID1_Active)
-			? mailboxes[13].ID1
-			: mailboxes[13].ID2;
+	ECanaMboxes.MBOX13.MSGID.all = (mailboxes[13].ID1_Active)
+			? (mailboxes[13].ID1 << 18)
+			: (mailboxes[13].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD13 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME13 = 1;			//enable
 	ECanaMOTORegs.MOTO13 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX14.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX14.MSGID.bit.STDMSGID = (mailboxes[14].ID1_Active)
-			? mailboxes[14].ID1
-			: mailboxes[14].ID2;
+	ECanaMboxes.MBOX14.MSGID.all = (mailboxes[14].ID1_Active)
+			? (mailboxes[14].ID1 << 18)
+			: (mailboxes[14].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD14 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME14 = 1;			//enable
 	ECanaMOTORegs.MOTO14 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX15.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX15.MSGID.bit.STDMSGID = (mailboxes[15].ID1_Active)
-			? mailboxes[15].ID1
-			: mailboxes[15].ID2;
+	ECanaMboxes.MBOX15.MSGID.all = (mailboxes[15].ID1_Active)
+			? (mailboxes[15].ID1 << 18)
+			: (mailboxes[15].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD15 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME15 = 1;			//enable
 	ECanaMOTORegs.MOTO15 = CAN_TIMEOUT_IN_SECS(3.0);
 
 	ECanaMboxes.MBOX16.MSGCTRL.all = 0x18; 	// DLC 8, RTR Transmit
-	ECanaMboxes.MBOX16.MSGID.bit.STDMSGID = (mailboxes[16].ID1_Active)
-			? mailboxes[16].ID1
-			: mailboxes[16].ID2;
+	ECanaMboxes.MBOX16.MSGID.all = (mailboxes[16].ID1_Active)
+			? (mailboxes[16].ID1 << 18)
+			: (mailboxes[16].ID2 << 18);
 	ECanaShadow.CANMD.bit.MD16 = 1; 			//receive
 	ECanaShadow.CANME.bit.ME16 = 1;			//enable
 	ECanaMOTORegs.MOTO16 = CAN_TIMEOUT_IN_SECS(3.0);

@@ -64,8 +64,8 @@ typedef struct
 
 typedef struct
 {
-	Uint8 ID1;
-	Uint8 ID2;
+	Uint32 ID1;
+	Uint32 ID2;
 	cells_t Active_Cells;
 	Bool ID1_Active;
 } can_bim_mailbox_t;

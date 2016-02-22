@@ -56,7 +56,7 @@ void Timer_Update(void)
 void Timer_Setup(timer_t * timer, Int32 runtime, timerCallback * cb)
 {
 	timer->_startTime = mInternalTimerTicks;
-	timer->_endTime = mInternalTimerTicks + runTime;
+	timer->_endTime = mInternalTimerTicks + runtime;
 	timer->_timeElapsed = FALSE;
 	timer->_timerActive = TRUE;
 	timer->callback = cb;

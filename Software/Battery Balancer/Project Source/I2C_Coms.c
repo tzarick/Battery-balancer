@@ -153,7 +153,7 @@ Void I2C_Init()
 
 	EDIS;
 
-	I2C_ConfigureTCA9555();
+	//I2C_ConfigureTCA9555();
 
 	// Post complete event now that module is initialized.
 	// Outside module just needs to post I2C_SEND_EVENT now.
