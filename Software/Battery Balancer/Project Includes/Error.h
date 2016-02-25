@@ -28,10 +28,19 @@ typedef enum {
 	// CAN Errors
 	errCanBusError,
 	errCanRtrError,
+	errCanTimeoutError,		//< CAN message not received fast enough
+
+	// SPI Errors
+	errSpiTxBufError,			//< Spi TX buffer is full
+	errSpiRxBufError,			//< Spi RX buffer is full
+	errSpiTxEmptyError,			//< Spi TX buffer is empty
+	errSpiRxEmptyError,			//< Spi RX buffer is empty
+	errSpiDeviceSwitchError,	//< Attempted to start a transaction while another
+								// 	device was already transacting
 
 	// System Fatal Errors
 	errStackOverflow
-} errors_t;
+} error_t;
 
 /// Calls Error_HandleError if condition is not satisfied and never returns
 #define ASSERT(condition, error)	if(!(condition)) 				\
@@ -41,6 +50,6 @@ typedef enum {
 
 //---------------------------------------------------------------------------------
 
-void Error_HandleError(errors_t error);
+void Error_HandleError(error_t error);
 
 #endif /* PROJECT_INCLUDES_ERROR_H_ */

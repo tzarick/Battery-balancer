@@ -27,7 +27,7 @@
 // Public functions
 //-----------------------------------------------------------------------
 
-void Error_HandleError(errors_t error)
+void Error_HandleError(error_t error)
 {
 	// todo: Complete
 }

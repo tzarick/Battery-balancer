@@ -18,6 +18,7 @@
 #include "CAN.h"
 #include "I2C_Coms.h"
 #include "Timer.h"
+#include "SPI.h"
 
 //-----------------------------------------------------------------------
 // Global variables
@@ -71,6 +72,8 @@ void HardwareInit()
 	I2C_Init();
 	// @todo: CAN setup
 	CAN_Init();
+
+	SPI_Init();
 }
 
 Void SoftwareInit()

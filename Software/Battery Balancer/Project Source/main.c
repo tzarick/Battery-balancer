@@ -17,6 +17,7 @@
 #include "I2C_Coms.h"
 #include "GPIO.h"
 #include "CellStatus.h"
+#include "SPI.h"
 
 // @todo: Document events
 
@@ -62,6 +63,10 @@ Int main()
         System_printf("Task_create() failed!\n");
         BIOS_exit(0);
     }
+
+    // todo: Remove this test..
+    SPI_PushToQueue(2, RELAYS);
+    SPI_SendTx(RELAYS);
 
     BIOS_start();    /* does not return */
     return(0);
