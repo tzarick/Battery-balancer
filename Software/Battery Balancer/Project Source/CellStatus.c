@@ -32,10 +32,20 @@ extern cell_voltage Cell_Voltages[CELLS_IN_SERIES];
 
 // todo: Move cellStatus init here, clean up global array?
 
-cellStatus_t CellStatus_WorstCellStatus(void)
+error_t CellStatus_InitCell(cell_t * cell)
+{
+	cell->balance = FALSE;
+	error_t retVal = Timer_Setup(&cell->relaxationTimer, NULL);
+	cell->status = CELL_OK;
+	cell->voltage = -1;
+	return retVal;
+}
+
+cellStatus_t CellStatus_WorstCellStatus(cell_t * firstCell, Uint16 cellAmount)
 {
 	cellStatus_t result = CELL_OK;
-	Uint8 i;
+	uint8_t i;
+
 	for (i = 0; i < CELLS_IN_SERIES; i++)
 	{
 		if (Cell_Voltages[i] >= MAX_CELL_CRITICAL_VOLTAGE)
@@ -48,5 +58,6 @@ cellStatus_t CellStatus_WorstCellStatus(void)
 			result = CELL_MAX_VOLT;
 		}
 	}
+
 	return result;
 }

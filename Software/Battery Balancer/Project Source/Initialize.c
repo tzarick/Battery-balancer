@@ -19,6 +19,7 @@
 #include "I2C_Coms.h"
 #include "Timer.h"
 #include "SPI.h"
+#include "State.h"
 
 //-----------------------------------------------------------------------
 // Global variables
@@ -31,6 +32,8 @@ extern Uint16 RamfuncsLoadSize;
 */
 
 cell_voltage Cell_Voltages[CELLS_IN_SERIES];
+
+extern cell_t cells[CELLS_IN_SERIES];
 
 extern struct CPUTIMER_VARS CpuTimer0;
 
@@ -56,8 +59,6 @@ extern struct CPUTIMER_VARS CpuTimer0;
 // Private (Internal) function definitions
 //-----------------------------------------------------------------------
 
-void Cell_Voltages_Init(void);
-
 //-----------------------------------------------------------------------
 // Public functions
 //-----------------------------------------------------------------------
@@ -67,27 +68,29 @@ void HardwareInit()
 	memcpy(&RamfuncsRunStart,&RamfuncsLoadStart,(unsigned long)&RamfuncsLoadSize);
 	InitFlash();
 	*/
+
+
 	Gpio_Init();
 	// @todo: I2C setup
-	I2C_Init();
+	//I2C_Init();
 	// @todo: CAN setup
 	CAN_Init();
+
+	InitializeState();
+
+	Timer_Init();
 
 	SPI_Init();
 }
 
 Void SoftwareInit()
 {
-	Cell_Voltages_Init();
 	Timer_Init();
-}
 
-
-void Cell_Voltages_Init(void)
-{
-	int i;
+	/// Initialize the cells to a known state
+	Uint16 i;
 	for (i = 0; i < CELLS_IN_SERIES; i++)
 	{
-		Cell_Voltages[i] = -1;	// Set to negative value until BIM updates
+		CellStatus_InitCell(&cells[i]);
 	}
 }

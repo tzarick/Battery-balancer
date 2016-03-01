@@ -50,18 +50,6 @@ Void Gpio_Init()
 	// Setup GPIO Registers
 	EALLOW;
 
-	// LED Setup (temporary)
-	GpioCtrlRegs.GPBMUX1.bit.GPIO34 = GPIO_MUX;
-	GpioCtrlRegs.GPBDIR.bit.GPIO34 = GPIO_OUT;
-
-	GpioCtrlRegs.GPBMUX1.bit.GPIO41 = GPIO_MUX;
-	GpioCtrlRegs.GPBDIR.bit.GPIO41 = GPIO_OUT;
-
-	GpioCtrlRegs.GPAMUX1.bit.GPIO9 = GPIO_MUX;
-	GpioCtrlRegs.GPADIR.bit.GPIO9 = GPIO_OUT;
-
-	GpioCtrlRegs.GPAMUX1.bit.GPIO11 = GPIO_MUX;
-	GpioCtrlRegs.GPADIR.bit.GPIO11 = GPIO_OUT;
 
 	EDIS;
 

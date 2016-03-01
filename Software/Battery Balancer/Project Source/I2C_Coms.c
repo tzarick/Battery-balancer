@@ -76,13 +76,13 @@ typedef enum {
 
 static i2c_states mCurrentState;
 
-static Uint8 mLastDataReceived;
+static uint8_t mLastDataReceived;
 
-static Uint8 mPortOutput0;
-static Uint8 mPortOutput1;
+static uint8_t mPortOutput0;
+static uint8_t mPortOutput1;
 
-static Uint8 mPortInput0;
-static Uint8 mPortInput1;
+static uint8_t mPortInput0;
+static uint8_t mPortInput1;
 
 static Bool mInitialized = FALSE;
 
@@ -93,9 +93,9 @@ static Bool mInitialized = FALSE;
 
 static void I2C_ConfigureTCA9555(void);
 
-static void I2C_WriteRegister(Uint8 address, Uint8 data);
+static void I2C_WriteRegister(uint8_t address, uint8_t data);
 
-static void I2C_ReadRegister(Uint8 address);
+static void I2C_ReadRegister(uint8_t address);
 
 
 //-----------------------------------------------------------------------
@@ -122,11 +122,12 @@ Void I2C_Init()
 	GpioCtrlRegs.GPBQSEL1.bit.GPIO33 = 3; // Asynch input
 	GpioCtrlRegs.GPBMUX1.bit.GPIO33 = 1;  // GPIO33 = SCLA
 
+#ifndef PE_BOARD
 	// Setup GP0 as interrupt source XINT0
 	GpioCtrlRegs.GPAMUX2.bit.GPIO26 = 0;		// use GPIO17 as GPIO
 	GpioCtrlRegs.GPADIR.bit.GPIO26 = 0;		// GPIO17 is input
 	GpioCtrlRegs.GPAPUD.bit.GPIO26 = 0;		//Enable pullup
-
+#endif
 
 	GpioIntRegs.GPIOXINT1SEL.bit.GPIOSEL = 26;		// XINT1 is GPIO17
 	XIntruptRegs.XINT1CR.bit.POLARITY = 0;		// falling edge
@@ -169,7 +170,7 @@ i2c_states I2C_GetState()
 	return mCurrentState;
 }
 
-Uint8 I2C_GetPortInput(tca9555_ports port)
+uint8_t I2C_GetPortInput(tca9555_ports port)
 {
 	ASSERT(mInitialized, errI2cNotInitialized);
 	if (port == PORT_0)
@@ -187,7 +188,7 @@ Uint8 I2C_GetPortInput(tca9555_ports port)
 	}
 }
 
-void I2C_SetPortOutput(tca9555_ports port, Uint8 data)
+void I2C_SetPortOutput(tca9555_ports port, uint8_t data)
 {
 	ASSERT(mInitialized, errI2cNotInitialized);
 	if (port == PORT_0)
@@ -213,9 +214,9 @@ void I2C_SendOutput(void)
 
 static void I2C_ConfigureTCA9555(void)
 {
-	Uint8 inputs = 	ERROR_BUTTON | STOP_BUTTON | SWITCH_CHARGE_AND_BALANCE |
+	uint8_t inputs = 	ERROR_BUTTON | STOP_BUTTON | SWITCH_CHARGE_AND_BALANCE |
 					SWITCH_CHARGE | START_BUTTON;
-	Uint8 events;
+	uint8_t events;
 
 	// Set inputs and outputs for Port 0 on the TCA9555
 	do
@@ -281,7 +282,7 @@ static void I2C_ConfigureTCA9555(void)
 
 void I2C_UpdateInputTask()
 {
-	Uint8 event;
+	uint8_t event;
 	while(TRUE)
 	{
 		/// Wait for interrupt from TCA9555 (see HWI_Service_TCA9555)
@@ -326,7 +327,7 @@ void I2C_UpdateInputTask()
 
 Bool I2C_SendOutputTask()
 {
-	Uint8 events;
+	uint8_t events;
 	while(TRUE)
 	{
 		Event_pend(I2C_Event, I2C_SEND_EVENT + I2C_COMPLETE_EVENT, Event_Id_NONE,
@@ -383,7 +384,7 @@ Bool I2C_SendOutputTask()
 	}
 }
 
-static void I2C_ReadRegister(Uint8 address)
+static void I2C_ReadRegister(uint8_t address)
 {
 	mCurrentState = I2C_SENDING_READ;
 	/// todo: Determine if needed after moving to event based I2C
@@ -400,7 +401,7 @@ static void I2C_ReadRegister(Uint8 address)
 	I2caRegs.I2CEMDR.all = 0x2620;
 }
 
-static void I2C_WriteRegister(Uint8 address, Uint8 data)
+static void I2C_WriteRegister(uint8_t address, uint8_t data)
 {
 	mCurrentState = I2C_SENDING_WRITE;
 	I2caRegs.I2CCNT = 2;

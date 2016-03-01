@@ -55,7 +55,7 @@ i2c_states I2C_GetState();
 ///	@returns	Uint8 value describing port states with a bitfield. (This value can
 ///				be anded with a enum value in expander_input_sector_X type where X
 ///				is the port.
-Uint8 I2C_GetPortInput(tca9555_ports port);
+uint8_t I2C_GetPortInput(tca9555_ports port);
 
 ///	Sets the desired outputs states on the TCA9555 IC.
 ///
@@ -65,7 +65,7 @@ Uint8 I2C_GetPortInput(tca9555_ports port);
 ///	@param		output -- The desired output as a bitfield. (This value can be set
 ///				by using expander_output_sector_X type values where X is the port
 ///				number to update.
-void I2C_SetPortOutput(tca9555_ports port, Uint8 output);
+void I2C_SetPortOutput(tca9555_ports port, uint8_t output);
 
 ///	Sends set port outputs to the TCA9555 IC.
 ///

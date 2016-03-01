@@ -13,7 +13,7 @@
 // Global variables
 //-----------------------------------------------------------------------
 
-extern cell_voltage Cell_Voltages[CELLS_IN_SERIES];
+extern cell_t cells[CELLS_IN_SERIES];
 
 //-----------------------------------------------------------------------
 // Constants
@@ -506,13 +506,13 @@ Void CAN_Receive_Interrupt()
 		Uint32 * CAN_Data_Address = 0x00006104 + (8 * rcvd_box);
 
 		// CAN MDL_Low Word Address
-		Cell_Voltages[mailboxes[rcvd_box].Active_Cells.CellSel1-1] = (*CAN_Data_Address);
+		cells[mailboxes[rcvd_box].Active_Cells.CellSel1-1].voltage = (*CAN_Data_Address);
 		// CAN MDL_High Word Address
-		Cell_Voltages[mailboxes[rcvd_box].Active_Cells.CellSel2-1] = (*(CAN_Data_Address) >> 16);
+		cells[mailboxes[rcvd_box].Active_Cells.CellSel2-1].voltage = (*(CAN_Data_Address) >> 16);
 		// CAN MDH_Low Word Address
-		Cell_Voltages[mailboxes[rcvd_box].Active_Cells.CellSel3-1] = (*(CAN_Data_Address + 1));
+		cells[mailboxes[rcvd_box].Active_Cells.CellSel3-1].voltage = (*(CAN_Data_Address + 1));
 		// CAN MDH_High Word Address
-		Cell_Voltages[mailboxes[rcvd_box].Active_Cells.CellSel4-1] = (*(CAN_Data_Address + 1) >> 16);
+		cells[mailboxes[rcvd_box].Active_Cells.CellSel4-1].voltage = (*(CAN_Data_Address + 1) >> 16);
 
 		// Disable received mailbox
 		ECanaRegs.CANME.all ^= (1UL << rcvd_box);

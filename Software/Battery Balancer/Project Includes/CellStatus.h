@@ -13,6 +13,8 @@
 // Common Includes
 
 #include "Common_Includes.h"
+#include "Timer.h"
+#include "Error.h"
 
 #define CELLS_IN_SERIES		134
 
@@ -31,11 +33,21 @@ typedef enum {
 	CELL_CRITICAL
 } cellStatus_t;
 
-extern cell_voltage Cell_Voltages[CELLS_IN_SERIES];
-
+typedef struct
+{
+	cell_voltage voltage;		///< Cell voltage in mV
+	cellStatus_t status;		///< The voltage status
+	Bool balance;				///< Whether the balance relay is active for cell
+	timer_t relaxationTimer;	///< Cell relaxation time after relay opened
+} cell_t;
 
 //---------------------------------------------------------------------------------
 
-cellStatus_t CellStatus_WorstCellStatus(void);
+error_t CellStatus_InitCell(cell_t * cell);
+
+///
+cellStatus_t CellStatus_WorstCellStatus(cell_t * firstCell, Uint16 cellAmount);
+
+
 
 #endif /* PROJECT_INCLUDES_CELLSTATUS_H_ */

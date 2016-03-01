@@ -22,6 +22,10 @@
 // @todo: Document events
 
 static state lastState = WAIT;
+
+cell_t cells[CELLS_IN_SERIES];
+
+
 /*
  *  ======== taskFxn ========
  */
@@ -64,9 +68,16 @@ Int main()
         BIOS_exit(0);
     }
 
-    // todo: Remove this test..
-    SPI_PushToQueue(2, RELAYS);
+
+
+    /*
+    Uint16 i;
+    for (i = 0; i < DRV8860_IN_SERIES; i++)
+    {
+        SPI_PushToQueue((i+10), RELAYS);
+    }
     SPI_SendTx(RELAYS);
+	*/
 
     BIOS_start();    /* does not return */
     return(0);
@@ -74,68 +85,91 @@ Int main()
 
 Void UpdateState()
 {
-	cellStatus_t status;
-	state currentState = GetState();
-	Uint8 expanderInputPort0 = I2C_GetPortInput(PORT_0);
-	Uint8 expanderInputPort1 = I2C_GetPortInput(PORT_1);
-	switch (currentState)
+    uint16_t * testPtr = NULL;
+
+
+	static cellStatus_t status;
+
+	while(1)
 	{
-		case WAIT:
+		state currentState = GetState();
+		uint8_t expanderInputPort0 = I2C_GetPortInput(PORT_0);
+		uint8_t expanderInputPort1 = I2C_GetPortInput(PORT_1);
+		switch (currentState)
+		{
+			case WAIT:
+				// todo: Remove this test..
 
-			if (expanderInputPort0 & START_BUTTON)
-			{
-				if (expanderInputPort0 & SWITCH_CHARGE_AND_BALANCE)
+				SPI_DRV8860_GetFaults(testPtr, 1);
+
+				if (expanderInputPort0 & START_BUTTON)
 				{
-					SetState(CHARGE_BALANCE);
+					if (expanderInputPort0 & SWITCH_CHARGE_AND_BALANCE)
+					{
+						SetState(CHARGE_BALANCE);
+					}
+					else if (expanderInputPort0 & SWITCH_CHARGE)
+					{
+						// Set next state to CHARGE
+						SetState(CHARGE);
+					}
+					else
+					{
+						// Balance only mode
+						SetState(BALANCE);
+					}
 				}
-				else if (expanderInputPort0 & SWITCH_CHARGE)
-				{
-					// Set next state to CHARGE
-					SetState(CHARGE);
-				}
-				else
-				{
-					// Balance only mode
-					SetState(BALANCE);
-				}
-			}
-			break;
-		case CHARGE:
-
-			// If switching from other state, update outputs
-			if (lastState != CHARGE)
-			{
-				I2C_SetPortOutput(PORT_0, START_INDICATOR);
-				I2C_SetPortOutput(PORT_1, CHARGE_LED_YELLOW);
-				I2C_SendOutput();
-			}
-
-			status = CellStatus_WorstCellStatus();
-
-			// If cell is in critical state, go into error state
-			if (status == CELL_CRITICAL)
-			{
-				SetState(ERROR);
 				break;
-			}
-			else if (status == CELL_MAX_VOLT)
-			{
-				// Update LCD
-				SetState(WAIT);
-			}
+			case CHARGE:
 
-			break;
-		case BALANCE:
-			break;
-		case CHARGE_BALANCE:
-			break;
-		case ERROR:
-			// Make system safe
+				// If switching from other state, update outputs
+				if (lastState != CHARGE)
+				{
+					/// Update I2C Outputs
+					I2C_SetPortOutput(PORT_0, START_INDICATOR);
+					I2C_SetPortOutput(PORT_1, CHARGE_LED_YELLOW);
+					I2C_SendOutput();
 
-			break;
-		default:
-			// Error
-			break;
+					/// Update SPI outputs
+					Uint16 i;
+					for (i = 0; i < DRV8860_IN_SERIES; i++)
+					{
+						/// Open all relays
+						SPI_PushToQueue(0, RELAYS);
+					}
+					SPI_SendTx(RELAYS);
+
+					/// Update screen
+					/// todo
+				}
+
+				//status = CellStatus_WorstCellStatus(&cells[0], CELLS_IN_SERIES);
+
+				// If cell is in critical state, go into error state
+				if (status == CELL_CRITICAL)
+				{
+					SetState(ERROR);
+					break;
+				}
+				else if (status == CELL_MAX_VOLT)
+				{
+					// Update LCD
+					SetState(WAIT);
+				}
+
+				break;
+			case BALANCE:
+				break;
+			case CHARGE_BALANCE:
+				break;
+			case ERROR:
+				// Make system safe
+
+				break;
+			default:
+				// Error
+				break;
+		}
+		lastState = currentState;
 	}
-	lastState = currentState;
 }

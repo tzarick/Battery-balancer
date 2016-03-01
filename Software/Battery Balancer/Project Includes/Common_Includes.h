@@ -8,6 +8,7 @@
 #ifndef PROJECT_INCLUDES_COMMON_INCLUDES_H_
 #define PROJECT_INCLUDES_COMMON_INCLUDES_H_
 
+#define PE_BOARD		1
 
 #include <xdc/std.h>			//mandatory - have to include first, for BIOS types
 #include <xdc/cfg/global.h> 				//header file for statically defined objects/handles

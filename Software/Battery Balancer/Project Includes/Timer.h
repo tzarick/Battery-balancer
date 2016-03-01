@@ -12,11 +12,12 @@
 // Common Includes
 
 #include "Common_Includes.h"
-
-typedef void timerCallback(void);
+#include "Error.h"
 
 //---------------------------------------------------------------------------------
 // Public variables
+
+typedef void timerCallback(Uint16 timerAddr);
 
 /// Timer struct that can be used to check if a certain amount of time has elapsed.
 typedef struct
@@ -27,6 +28,8 @@ typedef struct
 	Bool _timeElapsed;
 	timerCallback * callback;
 } timer_t;
+
+
 
 //---------------------------------------------------------------------------------
 
@@ -45,7 +48,11 @@ void Timer_Update(void);
 ///	param:	cb (timerCallback *) - The function that should be called when the timer
 ///			reaches a value of 0. This function can be NULL if no callback is
 ///			desired.
-void Timer_Setup(timer_t * timer, Int32 runtime, timerCallback * cb);
+error_t Timer_Setup(timer_t * timer, timerCallback * cb);
+
+void Timer_Start(timer_t * timer, Int32 runtime);
+
+void Timer_Stop(timer_t * timer);
 
 
 #endif /* PROJECT_INCLUDES_TIMER_H_ */

@@ -56,10 +56,10 @@
 
 typedef struct
 {
-	Uint8 CellSel1;
-	Uint8 CellSel2;
-	Uint8 CellSel3;
-	Uint8 CellSel4;
+	uint8_t CellSel1;
+	uint8_t CellSel2;
+	uint8_t CellSel3;
+	uint8_t CellSel4;
 } cells_t;
 
 typedef struct
