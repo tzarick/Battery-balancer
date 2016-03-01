@@ -10,6 +10,8 @@
 
 #define PE_BOARD		1
 
+typedef char	uint8_t;
+
 #include <xdc/std.h>			//mandatory - have to include first, for BIOS types
 #include <xdc/cfg/global.h> 				//header file for statically defined objects/handles
 #include "DSP28x_Project.h"
