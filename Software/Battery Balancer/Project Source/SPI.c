@@ -277,10 +277,10 @@ void SPI_DRV8860_GetFaults(Uint16 * faultArray, Uint16 arrayLength)
 	Uint16 i = 0;
 	EALLOW;
 
-	GpioCtrlRegs.GPAMUX2.bit.GPIO26 = 0;
+	//GpioCtrlRegs.GPAMUX2.bit.GPIO26 = 0;
 
 	GpioDataRegs.GPACLEAR.bit.GPIO14 = 1;
-	GpioDataRegs.GPACLEAR.bit.GPIO26 = 1;
+	//GpioDataRegs.GPACLEAR.bit.GPIO26 = 1;
 
 	Timer_Start(&mDelayTimer, 2);
 	while(mDelayTimer._timeElapsed != TRUE)
@@ -306,14 +306,14 @@ void SPI_DRV8860_GetFaults(Uint16 * faultArray, Uint16 arrayLength)
 	}
 
 	GpioDataRegs.GPASET.bit.GPIO14 = 1;
-	GpioDataRegs.GPASET.bit.GPIO26 = 1;
+	//GpioDataRegs.GPASET.bit.GPIO26 = 1;
 
 	for (i = 0; i < arrayLength; i++)
 	{
 
 	}
 
-	GpioCtrlRegs.GPAMUX2.bit.GPIO26 = 3;
+	//GpioCtrlRegs.GPAMUX2.bit.GPIO26 = 3;
 	EDIS;
 
 }

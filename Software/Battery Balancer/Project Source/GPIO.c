@@ -20,14 +20,7 @@
 // Constants
 //-----------------------------------------------------------------------
 
-// Value used to set GPxDIR register as GPIO output
-#define GPIO_OUT 		1
 
-// Value used to set GPxDIR register as GPIO input
-#define GPIO_IN			0
-
-// Value used to set GPxMUXy. Using this value with set the pin as a GPIO
-#define GPIO_MUX		0
 
 #define DISABLE_PULLUP	1
 

@@ -73,6 +73,9 @@ void I2C_SetPortOutput(tca9555_ports port, uint8_t output);
 ///	@pre		I2C state is not currently transaction (Use I2C_GetState)
 void I2C_SendOutput(void);
 
+void I2C_ReadRegister(uint8_t address);
+
+
 //----------------------------------------------------------------------------------
 
 #endif /* INCLUDE_I2C_COMS_H_ */

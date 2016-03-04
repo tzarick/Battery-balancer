@@ -58,6 +58,8 @@
 
 #define TCA9555_INT_LOW 		(0)
 
+#define WRITE_BUFFER_LEN		2
+
 // Possible I2C interrupt causes
 typedef enum {
 	NONE 			= 0,
@@ -86,6 +88,9 @@ static uint8_t mPortInput1;
 
 static Bool mInitialized = FALSE;
 
+static uint16_t mWriteIndex = 0;
+
+static uint8_t mWriteBuffer[WRITE_BUFFER_LEN] = {0};
 
 //-----------------------------------------------------------------------
 // Private (Internal) functions
@@ -95,7 +100,7 @@ static void I2C_ConfigureTCA9555(void);
 
 static void I2C_WriteRegister(uint8_t address, uint8_t data);
 
-static void I2C_ReadRegister(uint8_t address);
+//static void I2C_ReadRegister(uint8_t address);
 
 
 //-----------------------------------------------------------------------
@@ -115,21 +120,20 @@ Void I2C_Init()
 	EALLOW;
 
 	// Enable I2C-A on GPIO32 - GPIO33
-	GpioCtrlRegs.GPBPUD.bit.GPIO32 = 0;   // Enable pullup on GPIO32
-	GpioCtrlRegs.GPBMUX1.bit.GPIO32 = 1;  // GPIO32 = SDAA
-	GpioCtrlRegs.GPBQSEL1.bit.GPIO33 = 3; // Asynch input
-	GpioCtrlRegs.GPBPUD.bit.GPIO33 = 0;   // Enable pullup on GPIO33
-	GpioCtrlRegs.GPBQSEL1.bit.GPIO33 = 3; // Asynch input
-	GpioCtrlRegs.GPBMUX1.bit.GPIO33 = 1;  // GPIO33 = SCLA
 
-#ifndef PE_BOARD
-	// Setup GP0 as interrupt source XINT0
-	GpioCtrlRegs.GPAMUX2.bit.GPIO26 = 0;		// use GPIO17 as GPIO
-	GpioCtrlRegs.GPADIR.bit.GPIO26 = 0;		// GPIO17 is input
-	GpioCtrlRegs.GPAPUD.bit.GPIO26 = 0;		//Enable pullup
-#endif
 
-	GpioIntRegs.GPIOXINT1SEL.bit.GPIOSEL = 26;		// XINT1 is GPIO17
+	GpioCtrlRegs.GPAPUD.bit.GPIO28 = 0;   // Enable pullup on GPIO32
+	GpioCtrlRegs.GPAMUX2.bit.GPIO28 = 2;  // GPIO32 = SDAA
+	GpioCtrlRegs.GPAQSEL2.bit.GPIO28 = 3; // Asynch input
+	GpioCtrlRegs.GPAPUD.bit.GPIO29 = 0;   // Enable pullup on GPIO33
+	GpioCtrlRegs.GPAMUX2.bit.GPIO29 = 2;  // GPIO33 = SCLA
+	GpioCtrlRegs.GPAQSEL2.bit.GPIO29 = 3; // Asynch input
+
+	GpioCtrlRegs.GPAMUX2.bit.GPIO26 = GPIO_MUX;
+	GpioCtrlRegs.GPADIR.bit.GPIO26 = GPIO_IN;
+	GpioCtrlRegs.GPAPUD.bit.GPIO26 = GPIO_PULLUP;
+
+	GpioIntRegs.GPIOXINT1SEL.bit.GPIOSEL = 26;		// XINT1 is GPIO26
 	XIntruptRegs.XINT1CR.bit.POLARITY = 0;		// falling edge
 	XIntruptRegs.XINT1CR.bit.ENABLE = 1;		// enable XINT1
 
@@ -145,16 +149,20 @@ Void I2C_Init()
 	I2caRegs.I2CCLKL = 5;
 	I2caRegs.I2CCLKH = 5;
 
+	//I2caRegs.I2CSAR = 0x47;
+	I2caRegs.I2CSAR = SLAVE_ADDRESS;
+	//I2caRegs.I2COAR	= 0x01;
+
 	// Configure interrupt setup
-	I2caRegs.I2CIER.all = 0x1F;
+	I2caRegs.I2CIER.all = 0x3F;
 	// Enable I2C module
 	I2caRegs.I2CMDR.all = 0x20;
 	// Check FIFO configuration
-	I2caRegs.I2CFFTX.all = 0x6000;
+	//I2caRegs.I2CFFTX.all = 0x6020;
 
 	EDIS;
 
-	//I2C_ConfigureTCA9555();
+	I2C_ConfigureTCA9555();
 
 	// Post complete event now that module is initialized.
 	// Outside module just needs to post I2C_SEND_EVENT now.
@@ -208,8 +216,57 @@ void I2C_SetPortOutput(tca9555_ports port, uint8_t data)
 void I2C_SendOutput(void)
 {
 	ASSERT(mInitialized, errI2cNotInitialized);
-	// todo: Add assertion check
-	Event_post(I2C_Event, I2C_SEND_EVENT);
+
+	uint8_t events;
+
+	I2C_WriteRegister(OUTPUT_PORT_0, mPortOutput0);
+	// Send requested GPIO output for port 0 until slave confirms output is
+	do
+	{
+		// Use event here to pend until last transaction done
+		events = Event_pend(I2C_Event, Event_Id_NONE,
+						   (I2C_SEND_DONE_EVENT + I2C_ERROR_EVENT),
+						   BIOS_WAIT_FOREVER);
+
+		// If first send successful, proceed with read.
+		if (events & I2C_SEND_DONE_EVENT) {
+			I2C_ReadRegister(OUTPUT_PORT_0);
+			Event_pend(I2C_Event, Event_Id_NONE,
+					  (I2C_READ_EVENT + I2C_ERROR_EVENT), BIOS_WAIT_FOREVER);
+		}
+		// Send failed. While loop will catch and try again
+		else if (events & I2C_ERROR_EVENT) {
+			// Nothing to do?
+		}
+		// todo: Read address just assigned to make sure it matches up. If not
+		// repeat send.
+	} while ((mLastDataReceived != mPortOutput0) || (mCurrentState == I2C_TXN_ERROR));
+
+	// Send requested GPIO output for port 1 until slave confirms output is
+	// as requested.
+	do
+	{
+		I2C_WriteRegister(OUTPUT_PORT_1, mPortOutput1);
+
+		// Wait until TX buffer empty again (transaction complete).
+		events = Event_pend(I2C_Event, Event_Id_NONE,
+						   (I2C_SEND_DONE_EVENT + I2C_ERROR_EVENT),
+						   BIOS_WAIT_FOREVER);
+
+		// If first send successful, proceed with read.
+		if (events & I2C_SEND_DONE_EVENT) {
+			I2C_ReadRegister(OUTPUT_PORT_1);
+			Event_pend(I2C_Event, Event_Id_NONE,
+					  (I2C_READ_EVENT+I2C_ERROR_EVENT), BIOS_WAIT_FOREVER);
+		}
+		// Send failed. While loop will catch and try again
+		else if (events & I2C_ERROR_EVENT) {
+			// Nothing to do?
+		}
+	} while ((mLastDataReceived != mPortOutput1) || (mCurrentState == I2C_TXN_ERROR));
+
+	mCurrentState = I2C_NOT_IN_PROGRESS;
+	Event_post(I2C_Event, I2C_COMPLETE_EVENT);
 }
 
 static void I2C_ConfigureTCA9555(void)
@@ -283,11 +340,10 @@ static void I2C_ConfigureTCA9555(void)
 void I2C_UpdateInputTask()
 {
 	uint8_t event;
+
 	while(TRUE)
 	{
-		/// Wait for interrupt from TCA9555 (see HWI_Service_TCA9555)
-		Event_pend(I2C_Event, Event_Id_NONE, I2C_NEW_DATA_EVENT, BIOS_WAIT_FOREVER);
-
+		event = Event_pend(I2C_Receive_Event, Event_Id_NONE, I2C_NEW_DATA_EVENT, BIOS_WAIT_FOREVER);
 		mCurrentState = I2C_SENDING_READ;
 
 		/// Attempt to read the register
@@ -325,66 +381,8 @@ void I2C_UpdateInputTask()
 	}
 }
 
-Bool I2C_SendOutputTask()
-{
-	uint8_t events;
-	while(TRUE)
-	{
-		Event_pend(I2C_Event, I2C_SEND_EVENT + I2C_COMPLETE_EVENT, Event_Id_NONE,
-				   BIOS_WAIT_FOREVER);
 
-		// Send requested GPIO output for port 0 until slave confirms output is
-		do
-		{
-			I2C_WriteRegister(OUTPUT_PORT_0, mPortOutput0);
-			// Use event here to pend until last transaction done
-			events = Event_pend(I2C_Event, Event_Id_NONE,
-					 	 	   (I2C_SEND_DONE_EVENT + I2C_ERROR_EVENT),
-							   BIOS_WAIT_FOREVER);
-
-			// If first send successful, proceed with read.
-			if (events & I2C_SEND_DONE_EVENT) {
-				I2C_ReadRegister(OUTPUT_PORT_0);
-				Event_pend(I2C_Event, Event_Id_NONE,
-						  (I2C_READ_EVENT + I2C_ERROR_EVENT), BIOS_WAIT_FOREVER);
-			}
-			// Send failed. While loop will catch and try again
-			else if (events & I2C_ERROR_EVENT) {
-				// Nothing to do?
-			}
-			// todo: Read address just assigned to make sure it matches up. If not
-			// repeat send.
-		} while ((mLastDataReceived != mPortOutput0) || (mCurrentState == I2C_TXN_ERROR));
-
-		// Send requested GPIO output for port 1 until slave confirms output is
-		// as requested.
-		do
-		{
-			I2C_WriteRegister(OUTPUT_PORT_1, mPortOutput1);
-
-			// Wait until TX buffer empty again (transaction complete).
-			events = Event_pend(I2C_Event, Event_Id_NONE,
-					 	 	   (I2C_SEND_DONE_EVENT + I2C_ERROR_EVENT),
-							   BIOS_WAIT_FOREVER);
-
-			// If first send successful, proceed with read.
-			if (events & I2C_SEND_DONE_EVENT) {
-				I2C_ReadRegister(OUTPUT_PORT_1);
-				Event_pend(I2C_Event, Event_Id_NONE,
-						  (I2C_READ_EVENT+I2C_ERROR_EVENT), BIOS_WAIT_FOREVER);
-			}
-			// Send failed. While loop will catch and try again
-			else if (events & I2C_ERROR_EVENT) {
-				// Nothing to do?
-			}
-		} while ((mLastDataReceived != mPortOutput1) || (mCurrentState == I2C_TXN_ERROR));
-
-		mCurrentState = I2C_NOT_IN_PROGRESS;
-		Event_post(I2C_Event, I2C_COMPLETE_EVENT);
-	}
-}
-
-static void I2C_ReadRegister(uint8_t address)
+void I2C_ReadRegister(uint8_t address)
 {
 	mCurrentState = I2C_SENDING_READ;
 	/// todo: Determine if needed after moving to event based I2C
@@ -393,12 +391,13 @@ static void I2C_ReadRegister(uint8_t address)
 		// Message still in flight
 		return;
 	}
-
+	//while ( !(I2caRegs.I2CSTR.all & I2caRegs.I2CSTR.bit.ARDY));
 	I2caRegs.I2CCNT = 1;
 	I2caRegs.I2CDXR = address;
 
+	I2caRegs.I2CSTR.bit.RRDY = 1;
 	// Send with bits: Start, Mst, Trx, IRS
-	I2caRegs.I2CEMDR.all = 0x2620;
+	I2caRegs.I2CMDR.all = 0x2620;
 }
 
 static void I2C_WriteRegister(uint8_t address, uint8_t data)
@@ -406,8 +405,13 @@ static void I2C_WriteRegister(uint8_t address, uint8_t data)
 	mCurrentState = I2C_SENDING_WRITE;
 	I2caRegs.I2CCNT = 2;
 	//I2caRegs.I2CDXR = SLAVE_ADDRESS_WRITE;
-	I2caRegs.I2CDXR = address;
-	I2caRegs.I2CDXR = data;
+	mWriteIndex = 0;
+
+	mWriteBuffer[0] = address;
+	mWriteBuffer[1] = data;
+	I2caRegs.I2CDXR = mWriteBuffer[mWriteIndex];
+	mWriteIndex++;
+	//I2caRegs.I2CDXR = data;
 
 	// Master transmitter, START, STOP
 	I2caRegs.I2CMDR.all = 0x2E20;
@@ -432,25 +436,54 @@ void I2C_Interrupt(void)
 		}
 		else if (interruptSource == TX_DATA_READY)
 		{
+
 			if (mCurrentState & I2C_SENDING_WRITE)
 			{
-				Event_post(I2C_Event, I2C_SEND_DONE_EVENT);
+				if (mWriteIndex < WRITE_BUFFER_LEN)
+				{
+					I2caRegs.I2CDXR = mWriteBuffer[mWriteIndex];
+					mWriteIndex++;
+				}
 			}
 			else if (mCurrentState & I2C_SENDING_READ)
 			{
+				while (I2caRegs.I2CSTR.bit.ARDY != 1);
 				I2caRegs.I2CCNT = 1;
-				//I2caRegs.I2CDXR = SLAVE_ADDRESS;
-				// Master Receiver, STOP, START, NACK
-				I2caRegs.I2CMDR.all = 0xAC20;
+				I2caRegs.I2CMDR.all = 0x2420;
 			}
+			I2caRegs.I2CSTR.bit.XRDY = 1;
 		}
 		else if ((mCurrentState & I2C_DATA_READY) &&
 				(interruptSource == RX_DATA_READY))
 		{
 			mLastDataReceived = I2caRegs.I2CDRR;
 			Event_post(I2C_Event, I2C_READ_EVENT);
+			I2caRegs.I2CSTR.bit.RRDY = 1;
+		}
+		else if (interruptSource == STOP)
+		{
+			if (mWriteIndex == WRITE_BUFFER_LEN)
+			{
+				Event_post(I2C_Event, I2C_SEND_DONE_EVENT);
+			}
+			//I2caRegs.I2CSTR.bit.SCD = 1;
+		}
+		else if (interruptSource == REGS_READY)
+		{
+			if (mCurrentState & I2C_SENDING_READ)
+			{
+
+				//I2caRegs.I2CDXR = SLAVE_ADDRESS;
+				// Master Receiver, STOP, START, NACK
+				I2caRegs.I2CCNT = 1;
+				I2caRegs.I2CSAR = SLAVE_ADDRESS;
+				I2caRegs.I2CMDR.all = 0xAC20;
+			}
 		}
 	} while (interruptSource != NONE);
 }
 
-
+void I2C_TCA9555Interrupt(void)
+{
+	Event_post(I2C_Receive_Event, I2C_NEW_DATA_EVENT);
+}

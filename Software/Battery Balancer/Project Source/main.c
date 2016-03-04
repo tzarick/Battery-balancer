@@ -23,22 +23,17 @@
 
 static state lastState = WAIT;
 
+static timer_t ledTimer;
+
 cell_t cells[CELLS_IN_SERIES];
 
+uint8_t gpio_out = 0;
 
-/*
- *  ======== taskFxn ========
- */
-Void taskFxn(UArg a0, UArg a1)
-{
-    System_printf("enter taskFxn()\n");
+static Uint8 output = START_INDICATOR;
 
-    Task_sleep(10);
 
-    System_printf("exit taskFxn()\n");
 
-    System_flush(); /* force SysMin output to console */
-}
+void LED_Timer_Callback(void * timer_addr);
 
 /*
  *  ======== main ========
@@ -54,30 +49,8 @@ Int main()
 	//InitFlash();
 
 	HardwareInit();
-	SoftwareInit();
 	// @todo: Determine if I should keep default project code
-    Task_Handle task;
-    Error_Block eb;
 
-    System_printf("enter main()\n");
-
-    Error_init(&eb);
-    task = Task_create(taskFxn, NULL, &eb);
-    if (task == NULL) {
-        System_printf("Task_create() failed!\n");
-        BIOS_exit(0);
-    }
-
-
-
-    /*
-    Uint16 i;
-    for (i = 0; i < DRV8860_IN_SERIES; i++)
-    {
-        SPI_PushToQueue((i+10), RELAYS);
-    }
-    SPI_SendTx(RELAYS);
-	*/
 
     BIOS_start();    /* does not return */
     return(0);
@@ -87,11 +60,15 @@ Void UpdateState()
 {
     uint16_t * testPtr = NULL;
 
+    SoftwareInit();
 
+    Timer_Setup(&ledTimer, &LED_Timer_Callback);
+    Timer_Start(&ledTimer, 1000);
 	static cellStatus_t status;
 
 	while(1)
 	{
+		Timer_Update();
 		state currentState = GetState();
 		uint8_t expanderInputPort0 = I2C_GetPortInput(PORT_0);
 		uint8_t expanderInputPort1 = I2C_GetPortInput(PORT_1);
@@ -172,4 +149,15 @@ Void UpdateState()
 		}
 		lastState = currentState;
 	}
+}
+
+void LED_Timer_Callback(void * timer_addr)
+{
+	Timer_Start(&ledTimer, 1000);
+	output ^= START_INDICATOR;
+	I2C_SetPortOutput(PORT_0, output);
+	I2C_SendOutput();
+
+	gpio_out = I2C_GetPortInput(PORT_1);
+
 }

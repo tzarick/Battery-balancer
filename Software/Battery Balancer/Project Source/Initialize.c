@@ -72,20 +72,23 @@ void HardwareInit()
 
 	Gpio_Init();
 	// @todo: I2C setup
-	//I2C_Init();
+
 	// @todo: CAN setup
 	CAN_Init();
 
-	InitializeState();
 
-	Timer_Init();
-
-	SPI_Init();
 }
 
 Void SoftwareInit()
 {
+	InitializeState();
+
 	Timer_Init();
+
+	I2C_Init();
+	I2C_SetPortOutput(PORT_0, START_INDICATOR);
+	I2C_SendOutput();
+	SPI_Init();
 
 	/// Initialize the cells to a known state
 	Uint16 i;

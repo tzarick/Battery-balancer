@@ -8,7 +8,6 @@
 #ifndef PROJECT_INCLUDES_COMMON_INCLUDES_H_
 #define PROJECT_INCLUDES_COMMON_INCLUDES_H_
 
-#define PE_BOARD		1
 
 typedef char	uint8_t;
 

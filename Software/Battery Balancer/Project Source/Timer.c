@@ -80,7 +80,7 @@ void Timer_Update(void)
 			/// Call the timer's callback function
 			if (mValidTimers[i]->callback != NULL)
 			{
-				mValidTimers[i]->callback((Uint16)(mValidTimers[i]));
+				mValidTimers[i]->callback((void *)&(mValidTimers[i]));
 			}
 		}
 	}

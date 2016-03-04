@@ -17,7 +17,7 @@
 //---------------------------------------------------------------------------------
 // Public variables
 
-typedef void timerCallback(Uint16 timerAddr);
+typedef void timerCallback(void * timerAddr);
 
 /// Timer struct that can be used to check if a certain amount of time has elapsed.
 typedef struct

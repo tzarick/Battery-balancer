@@ -17,6 +17,18 @@
 //------------------------------------------------
 // Public variables
 
+// Value used to set GPxDIR register as GPIO output
+#define GPIO_OUT 		1
+
+// Value used to set GPxDIR register as GPIO input
+#define GPIO_IN			0
+
+// Value used to set GPxMUXy. Using this value with set the pin as a GPIO
+#define GPIO_MUX		0
+
+#define GPIO_PULLUP		1
+
+
 #define BULK_CHARGE_POWER_RELAY_ON 	(GpioDataRegs.GPASET.bit.GPIO5)
 #define BULK_CHARGE_POWER_RELAY_OFF	(GpioDataRegs.GPACLEAR.bit.GPIO5)
 #define BULK_CHARGE_ENABLE 			(GpioDataRegs.GPASET.bit.GPIO11)
