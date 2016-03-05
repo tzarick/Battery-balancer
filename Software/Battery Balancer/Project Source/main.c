@@ -69,6 +69,7 @@ Void UpdateState()
 	while(1)
 	{
 		Timer_Update();
+		I2C_Update();
 		state currentState = GetState();
 		uint8_t expanderInputPort0 = I2C_GetPortInput(PORT_0);
 		uint8_t expanderInputPort1 = I2C_GetPortInput(PORT_1);
@@ -105,7 +106,7 @@ Void UpdateState()
 					/// Update I2C Outputs
 					I2C_SetPortOutput(PORT_0, START_INDICATOR);
 					I2C_SetPortOutput(PORT_1, CHARGE_LED_YELLOW);
-					I2C_SendOutput();
+					//I2C_SendOutput();
 
 					/// Update SPI outputs
 					Uint16 i;
@@ -156,8 +157,8 @@ void LED_Timer_Callback(void * timer_addr)
 	Timer_Start(&ledTimer, 1000);
 	output ^= START_INDICATOR;
 	I2C_SetPortOutput(PORT_0, output);
-	I2C_SendOutput();
+	//I2C_SendOutput();
 
-	gpio_out = I2C_GetPortInput(PORT_1);
+	gpio_out = I2C_GetPortInput(PORT_0);
 
 }

@@ -87,7 +87,7 @@ Void SoftwareInit()
 
 	I2C_Init();
 	I2C_SetPortOutput(PORT_0, START_INDICATOR);
-	I2C_SendOutput();
+	//I2C_SendOutput();
 	SPI_Init();
 
 	/// Initialize the cells to a known state

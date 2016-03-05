@@ -25,7 +25,8 @@ typedef enum {
 	I2C_SENDING_READ = 1,
 	I2C_DATA_READY = 3,
 	I2C_SENDING_WRITE = 4,
-	I2C_TXN_ERROR = 5
+	I2C_SEND_DONE = 5,
+	I2C_TXN_ERROR = 6
 } i2c_states;
 
 /// Available ports on the TCA9555 to read from and write to.
@@ -40,6 +41,8 @@ typedef enum {
 ///	Sets up the I2C module to communicate with the TCA9555 GPIO
 /// expander IC at 400 kHz. It also configures the inputs and outputs on the TCA9555
 void I2C_Init();
+
+void I2C_Update(void);
 
 /// Gets the modules current state.
 ///
