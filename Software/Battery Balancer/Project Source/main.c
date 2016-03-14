@@ -21,7 +21,7 @@
 
 // @todo: Document events
 
-static state lastState = WAIT;
+static state_t lastState = WAIT;
 
 static timer_t ledTimer;
 
@@ -70,7 +70,7 @@ Void UpdateState()
 	{
 		Timer_Update();
 		I2C_Update();
-		state currentState = GetState();
+		state_t currentState = GetState();
 		uint8_t expanderInputPort0 = I2C_GetPortInput(PORT_0);
 		uint8_t expanderInputPort1 = I2C_GetPortInput(PORT_1);
 		switch (currentState)

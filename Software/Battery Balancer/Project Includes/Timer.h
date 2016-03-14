@@ -54,5 +54,9 @@ void Timer_Start(timer_t * timer, Int32 runtime);
 
 void Timer_Stop(timer_t * timer);
 
+Bool Timer_HasElapsed(timer_t * timer);
+
+Bool Timer_IsActive(timer_t * timer);
+
 
 #endif /* PROJECT_INCLUDES_TIMER_H_ */

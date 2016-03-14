@@ -61,3 +61,9 @@ cellStatus_t CellStatus_WorstCellStatus(cell_t * firstCell, Uint16 cellAmount)
 
 	return result;
 }
+
+cell_voltage CellStatus_MinCellVolt(void)
+{
+	//todo: Implementation
+	return 0;
+}

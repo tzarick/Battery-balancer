@@ -48,6 +48,6 @@ error_t CellStatus_InitCell(cell_t * cell);
 ///
 cellStatus_t CellStatus_WorstCellStatus(cell_t * firstCell, Uint16 cellAmount);
 
-
+cell_voltage CellStatus_MinCellVolt(void);
 
 #endif /* PROJECT_INCLUDES_CELLSTATUS_H_ */

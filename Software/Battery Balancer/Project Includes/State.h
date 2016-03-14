@@ -24,16 +24,16 @@ typedef enum
 	BALANCE,
 	CHARGE_BALANCE,
 	ERROR
-} state;
+} state_t;
 
 //------------------------------------------------
 // Public functions
 
 Void InitializeState();
 
-state GetState();
+state_t GetState();
 
-Bool SetState(state nextState);
+Bool SetState(state_t nextState);
 
 //------------------------------------------------
 

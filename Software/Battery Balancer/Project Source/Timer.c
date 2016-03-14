@@ -121,6 +121,16 @@ void Timer_Stop(timer_t * timer)
 	timer->_timerActive = FALSE;
 }
 
+Bool Timer_HasElapsed(timer_t * timer)
+{
+	return timer->_timeElapsed;
+}
+
+Bool Timer_IsActive(timer_t * timer)
+{
+	return timer->_timerActive;
+}
+
 void Timer_ISR(void)
 {
 	mInternalTimerTicks++;

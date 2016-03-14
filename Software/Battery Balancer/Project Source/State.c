@@ -27,7 +27,7 @@
 
 typedef struct
 {
-	state balancer_state;
+	state_t balancer_state;
 	Bool initialized;
 } balancer_state_t;
 
@@ -47,13 +47,13 @@ Void InitializeState()
 	system_state.initialized = TRUE;
 }
 
-state GetState()
+state_t GetState()
 {
 	// Check if initialized. Throw error if not.
 	return system_state.balancer_state;
 }
 
-Bool SetState(state nextState)
+Bool SetState(state_t nextState)
 {
 	// Semaphore for safety?
 	// Check for value of nextState to see if within bounds?
