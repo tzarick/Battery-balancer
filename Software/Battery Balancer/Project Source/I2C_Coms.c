@@ -357,6 +357,7 @@ static void I2C_ConfigureTCA9555(void)
 
 	// Set internally the input states of TCA9555 on Port 0
 	localGpioStates[portInput0] = mLastDataReceived;
+	tca9555GpioStates[portInput0] = mLastDataReceived;
 
 	//inputs = LCD_UP_BUTTON | LCD_DOWN_BUTTON;
 	inputs = 0;
@@ -389,6 +390,7 @@ static void I2C_ConfigureTCA9555(void)
 
 	// Set internally the input states of TCA9555 on Port 1
 	localGpioStates[portInput1] = mLastDataReceived;
+	tca9555GpioStates[portInput1] = mLastDataReceived;
 }
 
 void I2C_ReadRegister(uint8_t address)

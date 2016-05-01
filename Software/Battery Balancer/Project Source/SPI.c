@@ -31,7 +31,6 @@
 #define NO_DEVICE		0
 
 #define LCD_MAX_CHARS_PER_LINE		26
-#define DRV8860_IN_SERIES			17
 
 #define RECEIVE_BUFFER_LENGTH		(DRV8860_IN_SERIES)
 #define LCD_TX_BUFFER_LENGTH		(LCD_MAX_CHARS_PER_LINE)
@@ -64,6 +63,12 @@ static Uint16 mRelayTxIndex;
 static uint8_t mDeviceInUse;
 
 static timer_t mDelayTimer;
+
+/// Current index to send in LCD transmit buffer
+static Uint16 mLcdStartIndex = 0;
+
+/// Current index to send in relay transmit buffer
+static Uint16 mRelayStartIndex = 0;
 
 //-----------------------------------------------------------------------
 // Private (Internal) functions
@@ -149,9 +154,9 @@ void SPI_Init(void)
 	// Requires LSPCLK of SYSCLKOUT/6
 	SpibRegs.SPIBRR = 86;
 
-	// SPIFFENA OFF
-	SpibRegs.SPIFFTX.all = 0xA040;
-	SpibRegs.SPIFFRX.all = 0x8000;
+	// SPIFFENA ON
+	SpibRegs.SPIFFTX.all = 0xE040;
+	SpibRegs.SPIFFRX.all = 0x6061;
     //SpibRegs.SPIPRI.bit.FREE = 1;           // Set so breakpoints don't disturb xmission
 
 	SpibRegs.SPICCR.bit.SPISWRESET = 1;
@@ -208,8 +213,6 @@ error_t SPI_PopFromQueue(uint8_t * queue_item)
 
 error_t SPI_SendTx(spi_device_t device)
 {
-	static Uint16 lcdStartIndex = 0;
-	static Uint16 relayStartIndex = 0;
 
 	error_t retVal = errNone;
 
@@ -232,15 +235,15 @@ error_t SPI_SendTx(spi_device_t device)
 				return retVal;
 			}
 			SPI_CS_LOW;
-			SpibRegs.SPITXBUF = ((Uint16)(mLcdTxBuffer[lcdStartIndex])) << 8;
-			lcdStartIndex ++;
+			SpibRegs.SPITXBUF = ((Uint16)(mLcdTxBuffer[mLcdStartIndex])) << 8;
+			mLcdStartIndex ++;
 			mDeviceInUse = LCD;
 			// Change mode to LCD mode.
 
-			if (lcdStartIndex >= mLcdTxIndex)
+			if (mLcdStartIndex >= mLcdTxIndex)
 			{
 				// Buffer empty. Reset indexes
-				lcdStartIndex = 0;
+				mLcdStartIndex = 0;
 				mLcdTxIndex = 0;
 				mDeviceInUse = NO_DEVICE;
 			}
@@ -255,27 +258,22 @@ error_t SPI_SendTx(spi_device_t device)
 				return retVal;
 			}
 			SPI_CS_LOW;
-			SpibRegs.SPITXBUF = ((Uint16)(mRelayTxBuffer[relayStartIndex])) << 8;
-			relayStartIndex ++;
+			SpibRegs.SPITXBUF = ((Uint16)(mRelayTxBuffer[mRelayStartIndex])) << 8;
+			mRelayStartIndex ++;
 			mDeviceInUse = RELAYS;
 
-			if (relayStartIndex >= mRelayTxIndex)
-			{
-				SPI_CS_HIGH;
-				relayStartIndex = 0;
-				mRelayTxIndex = 0;
-				mDeviceInUse = NO_DEVICE;
-			}
 			break;
 		}
 	}
 	return retVal;
 }
 
-void SPI_DRV8860_GetFaults(Uint16 * faultArray, Uint16 arrayLength)
+void SPI_DRV8860_GetFaults(uint16_t * faultArray, uint16_t arrayLength)
 {
 	Uint16 i = 0;
 	EALLOW;
+
+	GpioCtrlRegs.GPAMUX1.bit.GPIO14 = 0;    // Configure GPIO14 as GPIO
 
 	//GpioCtrlRegs.GPAMUX2.bit.GPIO26 = 0;
 
@@ -287,6 +285,7 @@ void SPI_DRV8860_GetFaults(Uint16 * faultArray, Uint16 arrayLength)
 	{
 		Timer_Update();
 	}
+
 
 	/// Inform the DRV8860 to read fault registers
 	SPI_CS_LOW;
@@ -306,11 +305,14 @@ void SPI_DRV8860_GetFaults(Uint16 * faultArray, Uint16 arrayLength)
 	}
 
 	GpioDataRegs.GPASET.bit.GPIO14 = 1;
+
+	GpioCtrlRegs.GPAMUX1.bit.GPIO14 = 3;    // Configure GPIO14 as SPICLKB
+
 	//GpioDataRegs.GPASET.bit.GPIO26 = 1;
 
 	for (i = 0; i < arrayLength; i++)
 	{
-
+		SpibRegs.SPITXBUF = 0;
 	}
 
 	//GpioCtrlRegs.GPAMUX2.bit.GPIO26 = 3;
@@ -320,25 +322,22 @@ void SPI_DRV8860_GetFaults(Uint16 * faultArray, Uint16 arrayLength)
 
 void SPI_HandleInterrupt(void)
 {
-	switch (SpibRegs.SPISTS.all)
+	uint16_t interruptSource = SpibRegs.SPIFFRX.bit.RXFFINT | SpibRegs.SPIFFRX.bit.RXFFOVF;
+
+	mReceiveBuffer[mRxBufferSize] = SpibRegs.SPIRXBUF;
+	SpibRegs.SPIFFRX.bit.RXFFINTCLR = 1;
+	mRxBufferSize ++;
+
+	if (mRelayStartIndex >= mRelayTxIndex)
 	{
-		case RX_OVERRUN:
-		{
-			break;
-		}
-		case SPI_READY:
-		{
-			mReceiveBuffer[mRxBufferSize] = SpibRegs.SPIRXBUF;
-			mRxBufferSize ++;
-
-			Event_post(SPI_Event, SPI_TX_READY_EVENT);
-
-			break;
-		}
-		case TX_FULL:
-		{
-			break;
-		}
+		SPI_CS_HIGH;
+		mRelayStartIndex = 0;
+		mRelayTxIndex = 0;
+		mDeviceInUse = NO_DEVICE;
+	}
+	else
+	{
+		Event_post(SPI_Event, SPI_TX_READY_EVENT);
 	}
 }
 

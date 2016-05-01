@@ -14,7 +14,7 @@
 #include "Common_Includes.h"
 #include "Error.h"
 
-#define DRV8860_IN_SERIES			(17)
+#define DRV8860_IN_SERIES			(3)
 
 //---------------------------------------------------------------------------------
 // Public variables
@@ -40,6 +40,6 @@ error_t SPI_PopFromQueue(uint8_t * queue_item);
 // todo: Document
 error_t SPI_SendTx(spi_device_t device);
 
-void SPI_DRV8860_GetFaults(Uint16 * faultArray, Uint16 arrayLength);
+void SPI_DRV8860_GetFaults(uint16_t * faultArray, uint16_t arrayLength);
 
 #endif /* PROJECT_INCLUDES_SPI_H_ */

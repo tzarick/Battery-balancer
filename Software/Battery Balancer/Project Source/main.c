@@ -49,6 +49,7 @@ Int main()
 	//InitFlash();
 
 	HardwareInit();
+
 	// @todo: Determine if I should keep default project code
 
 
@@ -76,7 +77,17 @@ Void UpdateState()
 		switch (currentState)
 		{
 			case WAIT:
+			{
 				// todo: Remove this test..
+
+				/// Update SPI outputs
+				Uint16 i = 0;
+				for (i = 0; i < DRV8860_IN_SERIES; i++)
+				{
+					/// Open all relays
+					SPI_PushToQueue(0xF, RELAYS);
+				}
+				SPI_SendTx(RELAYS);
 
 				SPI_DRV8860_GetFaults(testPtr, 1);
 
@@ -98,8 +109,9 @@ Void UpdateState()
 					}
 				}
 				break;
+			}
 			case CHARGE:
-
+			{
 				// If switching from other state, update outputs
 				if (lastState != CHARGE)
 				{
@@ -136,13 +148,19 @@ Void UpdateState()
 				}
 
 				break;
+			}
 			case BALANCE:
+			{
 				break;
+			}
 			case CHARGE_BALANCE:
+			{
 				break;
+			}
 			case ERROR:
+			{
 				// Make system safe
-
+			}
 				break;
 			default:
 				// Error

@@ -24,7 +24,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT.Texas Instruments XDS100v2 USB Emulator_0/C28xx" value="Battery Balancer"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:Battery Balancer}"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.Texas Instruments XDS100v2 USB Debug Probe/C28xx" value="C:/Users\Sean Harrington\Documents\Buckeye Current\CCS\Battery Balancer\Software\Battery Balancer\Debug\Battery Balancer.out"/>
-<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.Texas Instruments XDS100v2 USB Emulator_0/C28xx" value="C:/Users\Sean Harrington\Documents\Buckeye Current\CCS\Battery Balancer\Software\Battery Balancer\Debug\Battery Balancer.out"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.Texas Instruments XDS100v2 USB Emulator_0/C28xx" value="C:/Users\Sean\Documents\Buckeye Current New\CCS Workspace\Battery Balancer\Software\Battery Balancer\Debug\Battery Balancer.out"/>
 <mapAttribute key="com.ti.ccstudio.debug.ui.displayFormats">
 <mapEntry key="Texas Instruments XDS100v2 USB Debug Probe/C28xx@##separator##@1" value="32-Bit Hex - TI Style"/>
 </mapAttribute>

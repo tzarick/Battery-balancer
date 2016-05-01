@@ -9,6 +9,10 @@
 #include "State.h"
 #include "CellStatus.h"
 #include "Timer.h"
+#include "SPI.h"
+#include "GPIO.h"
+#include "I2C_Coms.h"
+#include "Initialize.h"
 
 //-----------------------------------------------------------------------
 // Global variables
@@ -70,6 +74,8 @@ void batteryController_TimerCallback(void * timerAddr);
 
 void BatteryController_Task(void)
 {
+    SoftwareInit();
+
 	uint16_t i;
 
 	timer_t balanceDoneTimer;
@@ -79,6 +85,7 @@ void BatteryController_Task(void)
 	// todo: Update this to variable that disables on error
 	while(1)
 	{
+		I2C_Update();
 		state_t state = GetState();
 
 		if ((state == CHARGE) || (state == CHARGE_BALANCE))
@@ -132,6 +139,43 @@ void BatteryController_Task(void)
 			{
 				/// Cell still balancing. Stop balancer timeout timer.
 				Timer_Stop(&balanceDoneTimer);
+			}
+		}
+		if (state == WAIT)
+		{
+			//TEMPORARY
+
+			uint8_t expanderInputPort0 = I2C_GetPortInput(PORT_0);
+			uint8_t expanderInputPort1 = I2C_GetPortInput(PORT_1);
+		    uint16_t * testPtr = NULL;
+
+			/// Update SPI outputs
+			Uint16 i = 0;
+			for (i = 0; i < DRV8860_IN_SERIES; i++)
+			{
+				/// Open all relays
+				SPI_PushToQueue(0xFF, RELAYS);
+			}
+			SPI_SendTx(RELAYS);
+
+			//SPI_DRV8860_GetFaults(testPtr, 1);
+
+			if (expanderInputPort0 & START_BUTTON)
+			{
+				if (expanderInputPort0 & SWITCH_CHARGE_AND_BALANCE)
+				{
+					SetState(CHARGE_BALANCE);
+				}
+				else if (expanderInputPort0 & SWITCH_CHARGE)
+				{
+					// Set next state to CHARGE
+					SetState(CHARGE);
+				}
+				else
+				{
+					// Balance only mode
+					SetState(BALANCE);
+				}
 			}
 		}
 	}
