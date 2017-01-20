@@ -20,14 +20,7 @@
 // Constants
 //-----------------------------------------------------------------------
 
-// Value used to set GPxDIR register as GPIO output
-#define GPIO_OUT 		1
 
-// Value used to set GPxDIR register as GPIO input
-#define GPIO_IN			0
-
-// Value used to set GPxMUXy. Using this value with set the pin as a GPIO
-#define GPIO_MUX		0
 
 #define DISABLE_PULLUP	1
 
@@ -50,18 +43,6 @@ Void Gpio_Init()
 	// Setup GPIO Registers
 	EALLOW;
 
-	// LED Setup (temporary)
-	GpioCtrlRegs.GPBMUX1.bit.GPIO34 = GPIO_MUX;
-	GpioCtrlRegs.GPBDIR.bit.GPIO34 = GPIO_OUT;
-
-	GpioCtrlRegs.GPBMUX1.bit.GPIO41 = GPIO_MUX;
-	GpioCtrlRegs.GPBDIR.bit.GPIO41 = GPIO_OUT;
-
-	GpioCtrlRegs.GPAMUX1.bit.GPIO9 = GPIO_MUX;
-	GpioCtrlRegs.GPADIR.bit.GPIO9 = GPIO_OUT;
-
-	GpioCtrlRegs.GPAMUX1.bit.GPIO11 = GPIO_MUX;
-	GpioCtrlRegs.GPADIR.bit.GPIO11 = GPIO_OUT;
 
 	EDIS;
 
@@ -85,11 +66,17 @@ Void Gpio_Init()
 	GpioCtrlRegs.GPAPUD.bit.GPIO15 = DISABLE_PULLUP;
 
 	// Toggle XINT1 on GPIO 12
+	/*
 	GpioIntRegs.GPIOXINT1SEL.all = 12;
 	XIntruptRegs.XINT1CR.bit.POLARITY = 1;
 	XIntruptRegs.XINT1CR.bit.ENABLE = 1;
-
+	*/
 	EDIS;
+}
+
+void HWI_Service_TCA9555(void)
+{
+	Event_post(I2C_Event, I2C_NEW_DATA_EVENT);
 }
 
 Void HWI_Switch_Service()
@@ -124,6 +111,7 @@ Void HWI_Switch_Service()
 		GpioDataRegs.GPBCLEAR.bit.GPIO41 = 1;
 		GpioDataRegs.GPACLEAR.bit.GPIO11 = 1;
 		*/
+		Event_post(StateChangeEvent, BALANCE_EVENT);
 	}
 	if (GpioDataRegs.GPADAT.bit.GPIO12 == 1 &&
 			GpioDataRegs.GPADAT.bit.GPIO15 == 1)
@@ -134,6 +122,7 @@ Void HWI_Switch_Service()
 		GpioDataRegs.GPBSET.bit.GPIO41 = 1;
 		GpioDataRegs.GPACLEAR.bit.GPIO11 = 1;
 		*/
+		Event_post(StateChangeEvent, CHARGE_BALANCE_EVENT);
 	}
 }
 
