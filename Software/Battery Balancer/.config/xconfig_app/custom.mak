@@ -7,5 +7,5 @@
 #       or equal to the generated config header
 #
 linker.cmd: package/cfg/app_p28L.xdl
-	$(SED) 's"^\"\(package/cfg/app_p28Lcfg.cmd\)\"$""\"C:/Users/Sean Harrington/Documents/Buckeye Current/CCS/Battery Balancer/Software/Battery Balancer/.config/xconfig_app/\1\""' package/cfg/app_p28L.xdl > $@
+	$(SED) 's"^\"\(package/cfg/app_p28Lcfg.cmd\)\"$""\"C:/Users/Sean/Documents/Buckeye Current New/CCS Workspace/Battery Balancer/Software/Battery Balancer/.config/xconfig_app/\1\""' package/cfg/app_p28L.xdl > $@
 	-$(SETDATE) -r:max package/cfg/app_p28L.h compiler.opt compiler.opt.defs
