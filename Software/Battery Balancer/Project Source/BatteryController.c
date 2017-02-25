@@ -151,6 +151,7 @@ void BatteryController_Task(void)
 
 			/// Update SPI outputs
 			Uint16 i = 0;
+			//DRV8860 is the buffer length?
 			for (i = 0; i < DRV8860_IN_SERIES; i++)
 			{
 				/// Open all relays
