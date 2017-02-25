@@ -49,8 +49,11 @@ Void Gpio_Init()
 	EALLOW;
 
 	// Hex encoder as 3 position switch (temporary)
+	//GPIO A Mux1 register
 	GpioCtrlRegs.GPAMUX1.bit.GPIO12 = GPIO_MUX;
+	//GPIO A direction register
 	GpioCtrlRegs.GPADIR.bit.GPIO12 = GPIO_IN;
+	//GPIO A Pull-Up disable register 
 	GpioCtrlRegs.GPAPUD.bit.GPIO12 = DISABLE_PULLUP;
 
 	GpioCtrlRegs.GPAMUX1.bit.GPIO13 = GPIO_MUX;
