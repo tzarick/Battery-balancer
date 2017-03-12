@@ -52,7 +52,6 @@ Int main()
 
 	// @todo: Determine if I should keep default project code
 
-
     BIOS_start();    /* does not return */
     return(0);
 }

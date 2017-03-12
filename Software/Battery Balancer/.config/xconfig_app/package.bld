@@ -11,7 +11,7 @@ var makeAssembly = false;
 var Executable = xdc.module('xdc.bld.Executable');
 
 var exeOpts = new Executable.Attrs({
-        cfgScript: 'C:/Users/Sean/Documents/Buckeye Current New/CCS Workspace/Battery Balancer/Software/Battery Balancer/app.cfg',
+        cfgScript: 'C:/Users/Chris/Documents/BuckeyeCurrent/Battery-balancer/Software/Battery Balancer/app.cfg',
         profile: 'release',
         cfgHome: 'xconfig_app',
 });
@@ -40,8 +40,8 @@ else {
 }
 
 var thisObj = {
-    cfg:        'C:/Users/Sean/Documents/Buckeye Current New/CCS Workspace/Battery Balancer/Software/Battery Balancer/app.cfg',
-    outputPath: 'C:/Users/Sean/Documents/Buckeye Current New/CCS Workspace/Battery Balancer/Software/Battery Balancer/.config/xconfig_app',
+    cfg:        'C:/Users/Chris/Documents/BuckeyeCurrent/Battery-balancer/Software/Battery Balancer/app.cfg',
+    outputPath: 'C:/Users/Chris/Documents/BuckeyeCurrent/Battery-balancer/Software/Battery Balancer/.config/xconfig_app',
     exeName:    'app' + suffix,
     exeIntName: 'app' + suffix.replace('.', '_'),
     targ:       targ,

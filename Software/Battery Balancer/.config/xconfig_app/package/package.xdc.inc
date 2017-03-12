@@ -4,7 +4,7 @@ package/xconfig_app.sch
 package/.vers_g180
 package/.vers_r170
 package/.vers_b160
-package/.xdc-A71
+package/.xdc-A65
 package/xconfig_app.java
 package/xconfig_app.class
 package/package_xconfig_app.c

@@ -432,11 +432,14 @@ static void I2C_WriteRegister(uint8_t address, uint8_t data)
 void I2C_Interrupt(void)
 {
 	Uint16 interruptSource;
+
 	do
 	{
 		// Each read of INTCODE clears the flag the caused the interrupt
 		// and loads in the next lower priority interrupt code if pending
+
 		interruptSource = I2caRegs.I2CISRC.bit.INTCODE;
+
 
 		if ((interruptSource == ARB_LOST) || (interruptSource == NOACK))
 		{
@@ -485,6 +488,7 @@ void I2C_Interrupt(void)
 		}
 		else if (interruptSource == REGS_READY)
 		{
+			I2caRegs.I2CSTR.bit.ARDY = 1;
 			if (mCurrentState & I2C_SENDING_READ)
 			{
 
@@ -495,6 +499,7 @@ void I2C_Interrupt(void)
 				I2caRegs.I2CMDR.all = 0xAC20;
 			}
 		}
+
 	} while (interruptSource != NONE);
 }
 
