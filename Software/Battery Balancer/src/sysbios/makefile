@@ -1,20 +1,20 @@
 
-XOPTS = -I"C:/ti/xdctools_3_31_01_33_core/packages/" -Dxdc_target_types__=C:/ti/tirtos_c2000_2_12_01_33/products/bios_6_41_04_54/packages/ti/targets/std.h -Dxdc_target_name__=C28_large
+XOPTS = -I"C:/ti/xdctools_3_31_00_24_core/packages/" -Dxdc_target_types__=C:/ti/tirtos_c2000_2_16_01_14/products/bios_6_45_02_31/packages/ti/targets/std.h -Dxdc_target_name__=C28_large
 
-vpath % C:/ti/tirtos_c2000_2_12_01_33/products/bios_6_41_04_54/packages/ti/sysbios/
-vpath %.c C:/ti/xdctools_3_31_01_33_core/packages/
+vpath % C:/ti/tirtos_c2000_2_16_01_14/products/bios_6_45_02_31/packages/ti/sysbios/
+vpath %.c C:/ti/xdctools_3_31_00_24_core/packages/
 
-CCOPTS    = -v28 -DLARGE_MODEL=1 -ml -q -mo  --program_level_compile -o3 -g --optimize_with_debug  -Dti_sysbios_family_c28_Hwi_zeroLatencyIERMask__D=0U
+CCOPTS    = -v28 -DLARGE_MODEL=1 -ml -q -mo  --program_level_compile -o3 -g --optimize_with_debug  -Dti_sysbios_knl_Task_minimizeLatency__D=FALSE -Dti_sysbios_family_c28_Hwi_zeroLatencyIERMask__D=0U -Dti_sysbios_knl_Clock_stopCheckNext__D=FALSE
 
-XDC_ROOT  = C:/ti/xdctools_3_31_01_33_core/packages/
+XDC_ROOT  = C:/ti/xdctools_3_31_00_24_core/packages/
 
-BIOS_ROOT = C:/ti/tirtos_c2000_2_12_01_33/products/bios_6_41_04_54/packages/ti/sysbios/
+BIOS_ROOT = C:/ti/tirtos_c2000_2_16_01_14/products/bios_6_45_02_31/packages/ti/sysbios/
 
-BIOS_DEFS =  -Dti_sysbios_BIOS_swiEnabled__D=TRUE -Dti_sysbios_BIOS_taskEnabled__D=TRUE -Dti_sysbios_BIOS_clockEnabled__D=TRUE -Dti_sysbios_BIOS_runtimeCreatesEnabled__D=TRUE -Dti_sysbios_hal_Hwi_DISABLE_ALL_HOOKS -Dti_sysbios_knl_Swi_DISABLE_ALL_HOOKS -Dti_sysbios_knl_Task_DISABLE_ALL_HOOKS -Dti_sysbios_BIOS_smpEnabled__D=FALSE -Dti_sysbios_Build_useHwiMacros -Dti_sysbios_knl_Swi_numPriorities__D=16 -Dti_sysbios_knl_Task_deleteTerminatedTasks__D=FALSE -Dti_sysbios_knl_Task_numPriorities__D=16 -Dti_sysbios_knl_Task_checkStackFlag__D=TRUE -Dti_sysbios_knl_Clock_TICK_SOURCE=ti_sysbios_knl_Clock_TickSource_TIMER -Dti_sysbios_knl_Clock_TICK_MODE=ti_sysbios_knl_Clock_TickMode_PERIODIC -Dti_sysbios_hal_Core_delegate_getId=ti_sysbios_hal_CoreNull_getId__E -Dti_sysbios_hal_Core_delegate_interruptCore=ti_sysbios_hal_CoreNull_interruptCore__E -Dti_sysbios_hal_Core_delegate_lock=ti_sysbios_hal_CoreNull_lock__E -Dti_sysbios_hal_Core_delegate_unlock=ti_sysbios_hal_CoreNull_unlock__E -Dti_sysbios_hal_Core_numCores__D=1 -Dti_sysbios_hal_CoreNull_numCores__D=1 -Dti_sysbios_utils_Load_taskEnabled__D=TRUE -Dti_sysbios_utils_Load_swiEnabled__D=FALSE -Dti_sysbios_family_c28_Hwi_dispatcherSwiSupport__D=TRUE -Dti_sysbios_family_c28_Hwi_dispatcherTaskSupport__D=TRUE -Dti_sysbios_family_c28_Hwi_dispatcherAutoNestingSupport__D=FALSE -Dti_sysbios_family_c28_Hwi_dispatcherIrpTrackingSupport__D=TRUE -Dti_sysbios_knl_Semaphore_supportsEvents__D=FALSE -Dti_sysbios_knl_Semaphore_supportsPriority__D=TRUE
+BIOS_DEFS =  -Dti_sysbios_BIOS_swiEnabled__D=TRUE -Dti_sysbios_BIOS_taskEnabled__D=TRUE -Dti_sysbios_BIOS_clockEnabled__D=TRUE -Dti_sysbios_BIOS_runtimeCreatesEnabled__D=TRUE -Dti_sysbios_hal_Hwi_DISABLE_ALL_HOOKS -Dti_sysbios_knl_Swi_DISABLE_ALL_HOOKS -Dti_sysbios_BIOS_smpEnabled__D=FALSE -Dti_sysbios_Build_useHwiMacros -Dti_sysbios_knl_Swi_numPriorities__D=16 -Dti_sysbios_knl_Task_deleteTerminatedTasks__D=FALSE -Dti_sysbios_knl_Task_numPriorities__D=16 -Dti_sysbios_knl_Task_checkStackFlag__D=TRUE -Dti_sysbios_knl_Task_initStackFlag__D=TRUE -Dti_sysbios_knl_Task_DISABLE_ALL_HOOKS -Dti_sysbios_knl_Clock_TICK_SOURCE=ti_sysbios_knl_Clock_TickSource_TIMER -Dti_sysbios_knl_Clock_TICK_MODE=ti_sysbios_knl_Clock_TickMode_PERIODIC -Dti_sysbios_hal_Core_delegate_getId=ti_sysbios_hal_CoreNull_getId__E -Dti_sysbios_hal_Core_delegate_interruptCore=ti_sysbios_hal_CoreNull_interruptCore__E -Dti_sysbios_hal_Core_delegate_lock=ti_sysbios_hal_CoreNull_lock__E -Dti_sysbios_hal_Core_delegate_unlock=ti_sysbios_hal_CoreNull_unlock__E -Dti_sysbios_hal_Core_numCores__D=1 -Dti_sysbios_hal_CoreNull_numCores__D=1 -Dti_sysbios_utils_Load_taskEnabled__D=TRUE -Dti_sysbios_utils_Load_swiEnabled__D=FALSE -Dti_sysbios_utils_Load_hwiEnabled__D=FALSE -Dti_sysbios_family_c28_Hwi_dispatcherSwiSupport__D=TRUE -Dti_sysbios_family_c28_Hwi_dispatcherTaskSupport__D=TRUE -Dti_sysbios_family_c28_Hwi_dispatcherAutoNestingSupport__D=FALSE -Dti_sysbios_family_c28_Hwi_dispatcherIrpTrackingSupport__D=TRUE -Dti_sysbios_knl_Semaphore_supportsEvents__D=FALSE -Dti_sysbios_knl_Semaphore_supportsPriority__D=TRUE
 
-BIOS_INC  = -I"C:/ti/tirtos_c2000_2_12_01_33/products/bios_6_41_04_54/packages/"
+BIOS_INC  = -I"C:/ti/tirtos_c2000_2_16_01_14/products/bios_6_45_02_31/packages/"
 
-TARGET_INC = -I"C:/ti/tirtos_c2000_2_12_01_33/products/bios_6_41_04_54/packages/"
+TARGET_INC = -I"C:/ti/tirtos_c2000_2_16_01_14/products/bios_6_45_02_31/packages/"
 
 INCS = $(BIOS_INC) $(TARGET_INC)  
 
@@ -22,8 +22,8 @@ CC = C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.6/bin/cl2000 -c $(CCOPTS) -I C:
 ASM = C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.6/bin/cl2000 -c $(CCOPTS) -I C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.6/include
 AR = C:/ti/ccsv6/tools/compiler/ti-cgt-c2000_6.4.6/bin/ar2000 rq
 
-DEL = cmd.exe /q /c del /f
-CP = cmd.exe /q /c copy /Y
+DEL = C:/ti/xdctools_3_31_00_24_core/packages/../bin/rm -f
+CP = C:/ti/xdctools_3_31_00_24_core/packages/../bin/cp -f
 
 define RM
 	$(if $(wildcard $1),$(DEL) $1,:)
@@ -85,9 +85,5 @@ sysbios.a28L: BIOS.obj c28_Hwi_asm.obj c28_Hwi_disp_asm.obj c28_IntrinsicsSuppor
 
 
 clean:
-	@-$(call RM, sysbios.a28L)
-	@-$(call RM, BIOS.obj)
-	@-$(call RM, c28_Hwi_asm.obj)
-	@-$(call RM, c28_Hwi_disp_asm.obj)
-	@-$(call RM, c28_IntrinsicsSupport_asm.obj)
-	@-$(call RM, c28_TaskSupport_asm.obj)
+	@$(DEL) ..\makefile.libs
+	@-$(call RM, *)

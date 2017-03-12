@@ -52,7 +52,6 @@ Int main()
 
 	// @todo: Determine if I should keep default project code
 
-
     BIOS_start();    /* does not return */
     return(0);
 }
@@ -88,7 +87,7 @@ Void UpdateState()
 					SPI_PushToQueue(0xF, RELAYS);
 				}
 				SPI_SendTx(RELAYS);
-
+				//DRV8860 is the buffer length or something like that
 				SPI_DRV8860_GetFaults(testPtr, 1);
 
 				if (expanderInputPort0 & START_BUTTON)
