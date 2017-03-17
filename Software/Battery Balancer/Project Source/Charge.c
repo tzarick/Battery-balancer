@@ -44,4 +44,3 @@ state_t Bulk_Charge(state_t state){
     return state;
     
 }
-

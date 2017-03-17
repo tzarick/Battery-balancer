@@ -44,6 +44,8 @@
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.DIAG_WRAP.2004727793" name="Wrap diagnostic messages (--diag_wrap)" superClass="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.DIAG_WRAP" value="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.DIAG_WRAP.off" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.INCLUDE_PATH.1440127200" name="Add dir to #include search path (--include_path, -I)" superClass="com.ti.ccstudio.buildDefinitions.C2000_6.4.compilerID.INCLUDE_PATH" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\ti\controlSUITE\device_support\f2803x\v129\DSP2803x_common\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\ti\controlSUITE\device_support\f2803x\v129\DSP2803x_headers\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${CONTROLSUITE_F2803x_INSTALL}\DSP2803x_common\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${CONTROLSUITE_F2803x_INSTALL}\DSP2803x_headers\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${PROJECT_LOC}\Project Includes&quot;"/>
@@ -96,7 +98,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src|Project Source/BatteryControllerFunc.c|Project Source/CellBalancingHoldoff.c|Project Source/FrontPanel.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -183,6 +185,9 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<sourceEntries>
+						<entry excluding="src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>

@@ -17,23 +17,23 @@
 // Public variables
 
 // Bitmask of states the system can be in
-typedef enum STATES
+typedef enum
 {
-	WAIT 			= 0,
-	CHARGE  		= 2,
-	BALANCE 		= 4,
-	CHARGE_BALANCE 	= 8,
-	ERROR 			= 16
-} state;
+	WAIT,
+	CHARGE,
+	BALANCE,
+	CHARGE_BALANCE,
+	ERROR
+} state_t;
 
 //------------------------------------------------
 // Public functions
 
 Void InitializeState();
 
-state GetState();
+state_t GetState();
 
-Bool SetState(state nextState);
+Bool SetState(state_t nextState);
 
 //------------------------------------------------
 
