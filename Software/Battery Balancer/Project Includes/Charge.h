@@ -1,15 +1,21 @@
+//
+//  Charge.h
+//  
+//
+//  Created by David Moeller on 3/16/17.
+//
+//
+
+#ifndef Charge_h
+#define Charge_h
+
+#include <stdio.h>
+
 /*
- * Charge.h
- *
- *  Created on: Mar 10, 2017
- *      Author: Chris
+ Description:
+ -This function should be activated once bulk charging is enabled.
+ -Function is continuously called until one of the cell voltages reach the max value
  */
+state_t Bulk_Charge(state_t state);
 
-#ifndef PROJECT_INCLUDES_CHARGE_H_
-#define PROJECT_INCLUDES_CHARGE_H_
-
-
-
-
-
-#endif /* PROJECT_INCLUDES_CHARGE_H_ */
+#endif /* Charge_h */
