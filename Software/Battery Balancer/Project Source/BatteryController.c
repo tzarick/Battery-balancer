@@ -86,7 +86,8 @@ void BatteryController_Task(void)
 	while(1)
 	{
 		I2C_Update();
-		state_t state = GetState();
+		state_t state = GetState();		//States 0x00E0 and 0x00FF show up for no apparent reason
+										//Valid States: WAIT, CHARGE, CHARGE_BALANCE, BALANCE, ERROR
 
 		if ((state == CHARGE) || (state == CHARGE_BALANCE))
 		{
@@ -145,6 +146,7 @@ void BatteryController_Task(void)
 		{
 			//TEMPORARY
 
+			//Process front panel inputs- Find out which port is which
 			uint8_t expanderInputPort0 = I2C_GetPortInput(PORT_0);
 			uint8_t expanderInputPort1 = I2C_GetPortInput(PORT_1);
 		    uint16_t * testPtr = NULL;
@@ -161,6 +163,7 @@ void BatteryController_Task(void)
 
 			//SPI_DRV8860_GetFaults(testPtr, 1);
 
+			//Should trigger when START is pressed - Spoiler: It doesn't
 			if (expanderInputPort0 & START_BUTTON)
 			{
 				if (expanderInputPort0 & SWITCH_CHARGE_AND_BALANCE)

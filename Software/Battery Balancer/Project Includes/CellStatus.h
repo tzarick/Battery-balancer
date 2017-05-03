@@ -16,6 +16,7 @@
 #include "Timer.h"
 #include "Error.h"
 
+// Set to 24 for Testing; 134 for Full Pack
 #define CELLS_IN_SERIES		134
 
 // todo: Update me. These are based on Samsung cells

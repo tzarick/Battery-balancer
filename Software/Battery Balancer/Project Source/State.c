@@ -66,6 +66,8 @@ Bool SetState(state_t nextState)
 // SYS/BIOS Functions (USER SHOULD NOT CALL)
 //---------------------------------------------------------------------
 
+
+//todo: Update RTOS to include this task somehow
 Void StateChangeTask()
 {
 	UInt events;

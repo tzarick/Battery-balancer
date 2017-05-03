@@ -454,7 +454,7 @@ void I2C_Interrupt(void)
 		if ((interruptSource == ARB_LOST) || (interruptSource == NOACK))
 		{
 			// todo: Find out if something needs to be reset
-			mCurrentState = I2C_TXN_ERROR;
+			//mCurrentState = I2C_TXN_ERROR;
 			Event_post(I2C_Event, I2C_ERROR_EVENT);
 			return;
 		}

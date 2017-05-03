@@ -50,12 +50,14 @@ Int main()
 
 	HardwareInit();
 
+
 	// @todo: Determine if I should keep default project code
 
     BIOS_start();    /* does not return */
     return(0);
 }
 
+//This accomplishes the same thing as BatteryControllerTask - Why does this even exist?
 Void UpdateState()
 {
     uint16_t * testPtr = NULL;
