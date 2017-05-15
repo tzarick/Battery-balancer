@@ -323,10 +323,13 @@ void SPI_DRV8860_GetFaults(uint16_t * faultArray, uint16_t arrayLength)
 void SPI_HandleInterrupt(void)
 {
 	uint16_t interruptSource = SpibRegs.SPIFFRX.bit.RXFFINT | SpibRegs.SPIFFRX.bit.RXFFOVF;
-
-	mReceiveBuffer[mRxBufferSize] = SpibRegs.SPIRXBUF;
-	SpibRegs.SPIFFRX.bit.RXFFINTCLR = 1;
-	mRxBufferSize ++;
+	// Temporarily patched to prevent memory leak
+	// todo: Implement PopFromQueue to counter RxBuffer overflow
+	if (mRxBufferSize < 3) {
+		mReceiveBuffer[mRxBufferSize] = SpibRegs.SPIRXBUF;
+		SpibRegs.SPIFFRX.bit.RXFFINTCLR = 1;
+		mRxBufferSize ++;
+	}
 
 	if (mRelayStartIndex >= mRelayTxIndex)
 	{

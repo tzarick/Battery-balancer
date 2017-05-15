@@ -240,8 +240,8 @@ void I2C_Update(void)
 		case I2C_DATA_READY:
 		{
 			// todo: Oh come on... this is shit.
-			if (TCA9555_INT_LOW == GpioDataRegs.GPADAT.bit.GPIO26)
-			{
+			//if (TCA9555_INT_LOW == GpioDataRegs.GPADAT.bit.GPIO26)
+			//{
 				mLastState = mCurrentState;
 				mCurrentState = I2C_SENDING_READ;
 				if (mPortBeingRead == portInput0)
@@ -254,13 +254,13 @@ void I2C_Update(void)
 					mPortBeingRead = portInput0;
 					I2C_ReadRegister(INPUT_PORT_0);
 				}
-			}
-			else
-			{
-				mNewInputs = FALSE;
-				mLastState = mCurrentState;
-				mCurrentState = I2C_NOT_IN_PROGRESS;
-			}
+			//}
+			//else
+			//{
+			//	mNewInputs = FALSE;
+			//	mLastState = mCurrentState;
+			//	mCurrentState = I2C_NOT_IN_PROGRESS;
+			//}
 			break;
 		}
 		case I2C_SEND_DONE:
@@ -454,7 +454,7 @@ void I2C_Interrupt(void)
 		if ((interruptSource == ARB_LOST) || (interruptSource == NOACK))
 		{
 			// todo: Find out if something needs to be reset
-			//mCurrentState = I2C_TXN_ERROR;
+			mCurrentState = I2C_TXN_ERROR;
 			Event_post(I2C_Event, I2C_ERROR_EVENT);
 			return;
 		}

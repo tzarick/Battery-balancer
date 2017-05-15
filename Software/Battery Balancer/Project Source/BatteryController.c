@@ -156,10 +156,11 @@ void BatteryController_Task(void)
 			//DRV8860 is the buffer length?
 			for (i = 0; i < DRV8860_IN_SERIES; i++)
 			{
-				/// Open all relays
-				SPI_PushToQueue(0xFF, RELAYS);
+				/// Open all relays (1 == Close, 0 == Open)
+				SPI_PushToQueue(0x00, RELAYS);
 			}
 			SPI_SendTx(RELAYS);
+
 
 			//SPI_DRV8860_GetFaults(testPtr, 1);
 
@@ -181,6 +182,9 @@ void BatteryController_Task(void)
 					SetState(BALANCE);
 				}
 			}
+		}
+		else {
+			//todo: Handle Error State
 		}
 	}
 }
