@@ -86,7 +86,7 @@ Void UpdateState()
 				for (i = 0; i < DRV8860_IN_SERIES; i++)
 				{
 					/// Open all relays
-					SPI_PushToQueue(0xF, RELAYS);
+					SPI_PushToQueue(0xFF, RELAYS);
 				}
 				SPI_SendTx(RELAYS);
 				//DRV8860 is the buffer length or something like that
@@ -161,8 +161,8 @@ Void UpdateState()
 			case ERROR:
 			{
 				// Make system safe
-			}
 				break;
+			}
 			default:
 				// Error
 				break;

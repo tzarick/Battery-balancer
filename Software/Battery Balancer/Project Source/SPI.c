@@ -259,7 +259,7 @@ error_t SPI_SendTx(spi_device_t device)
 			}
 			SPI_CS_LOW;
 			SpibRegs.SPITXBUF = ((Uint16)(mRelayTxBuffer[mRelayStartIndex])) << 8;
-			mRelayStartIndex ++;
+			mRelayStartIndex++;
 			mDeviceInUse = RELAYS;
 
 			break;
@@ -325,10 +325,14 @@ void SPI_HandleInterrupt(void)
 	uint16_t interruptSource = SpibRegs.SPIFFRX.bit.RXFFINT | SpibRegs.SPIFFRX.bit.RXFFOVF;
 	// Temporarily patched to prevent memory leak
 	// todo: Implement PopFromQueue to counter RxBuffer overflow
-	if (mRxBufferSize < 3) {
-		mReceiveBuffer[mRxBufferSize] = SpibRegs.SPIRXBUF;
-		SpibRegs.SPIFFRX.bit.RXFFINTCLR = 1;
-		mRxBufferSize ++;
+	if (mRxBufferSize < DRV8860_IN_SERIES) {
+			mReceiveBuffer[mRxBufferSize] = SpibRegs.SPIRXBUF;
+			SpibRegs.SPIFFRX.bit.RXFFINTCLR = 1;
+			mRxBufferSize ++;
+	}
+	else
+	{
+		mRxBufferSize = 0;
 	}
 
 	if (mRelayStartIndex >= mRelayTxIndex)
