@@ -161,11 +161,15 @@ Void I2C_Init()
 	//					------------------------------------
 	//						SYSCLKOUT Freq (60,000,000)
 	//---------------------------------------------------------
+	//I2C prescalar register
 	I2caRegs.I2CPSC.all = 4;
+	//I2C clock low-time divide register
 	I2caRegs.I2CCLKL = 5;
+	//I2C clock high-time divide reigster
 	I2caRegs.I2CCLKH = 5;
 
 	//I2caRegs.I2CSAR = 0x47;
+	//I2C slave address reigster
 	I2caRegs.I2CSAR = SLAVE_ADDRESS;
 	//I2caRegs.I2COAR	= 0x01;
 
@@ -236,8 +240,8 @@ void I2C_Update(void)
 		case I2C_DATA_READY:
 		{
 			// todo: Oh come on... this is shit.
-			if (TCA9555_INT_LOW == GpioDataRegs.GPADAT.bit.GPIO26)
-			{
+			//if (TCA9555_INT_LOW == GpioDataRegs.GPADAT.bit.GPIO26)
+			//{
 				mLastState = mCurrentState;
 				mCurrentState = I2C_SENDING_READ;
 				if (mPortBeingRead == portInput0)
@@ -250,13 +254,13 @@ void I2C_Update(void)
 					mPortBeingRead = portInput0;
 					I2C_ReadRegister(INPUT_PORT_0);
 				}
-			}
-			else
-			{
-				mNewInputs = FALSE;
-				mLastState = mCurrentState;
-				mCurrentState = I2C_NOT_IN_PROGRESS;
-			}
+			//}
+			//else
+			//{
+			//	mNewInputs = FALSE;
+			//	mLastState = mCurrentState;
+			//	mCurrentState = I2C_NOT_IN_PROGRESS;
+			//}
 			break;
 		}
 		case I2C_SEND_DONE:
@@ -403,9 +407,12 @@ void I2C_ReadRegister(uint8_t address)
 		return;
 	}
 	//while ( !(I2caRegs.I2CSTR.all & I2caRegs.I2CSTR.bit.ARDY));
+	//I2C data count register
 	I2caRegs.I2CCNT = 1;
+	//I2C data transmit regsiter
 	I2caRegs.I2CDXR = address;
 
+	//I2C status register
 	I2caRegs.I2CSTR.bit.RRDY = 1;
 	// Send with bits: Start, Mst, Trx, IRS
 	I2caRegs.I2CMDR.all = 0x2620;
@@ -413,13 +420,16 @@ void I2C_ReadRegister(uint8_t address)
 
 static void I2C_WriteRegister(uint8_t address, uint8_t data)
 {
+	
 	mCurrentState = I2C_SENDING_WRITE;
+	//I2C data count register
 	I2caRegs.I2CCNT = 2;
 	//I2caRegs.I2CDXR = SLAVE_ADDRESS_WRITE;
 	mWriteIndex = 0;
 
 	mWriteBuffer[0] = address;
 	mWriteBuffer[1] = data;
+	//I2C data transmit register
 	I2caRegs.I2CDXR = mWriteBuffer[mWriteIndex];
 	mWriteIndex++;
 	//I2caRegs.I2CDXR = data;
@@ -432,11 +442,14 @@ static void I2C_WriteRegister(uint8_t address, uint8_t data)
 void I2C_Interrupt(void)
 {
 	Uint16 interruptSource;
+
 	do
 	{
 		// Each read of INTCODE clears the flag the caused the interrupt
 		// and loads in the next lower priority interrupt code if pending
+
 		interruptSource = I2caRegs.I2CISRC.bit.INTCODE;
+
 
 		if ((interruptSource == ARB_LOST) || (interruptSource == NOACK))
 		{
@@ -452,6 +465,7 @@ void I2C_Interrupt(void)
 			{
 				if (mWriteIndex < WRITE_BUFFER_LEN)
 				{
+					//I2C data transmit register
 					I2caRegs.I2CDXR = mWriteBuffer[mWriteIndex];
 					mWriteIndex++;
 				}
@@ -459,7 +473,9 @@ void I2C_Interrupt(void)
 			else if (mCurrentState & I2C_SENDING_READ)
 			{
 				while (I2caRegs.I2CSTR.bit.ARDY != 1);
+				//I2C data count register
 				I2caRegs.I2CCNT = 1;
+				//I2C mode register
 				I2caRegs.I2CMDR.all = 0x2420;
 			}
 			I2caRegs.I2CSTR.bit.XRDY = 1;
@@ -485,6 +501,7 @@ void I2C_Interrupt(void)
 		}
 		else if (interruptSource == REGS_READY)
 		{
+			I2caRegs.I2CSTR.bit.ARDY = 1;
 			if (mCurrentState & I2C_SENDING_READ)
 			{
 
@@ -495,6 +512,7 @@ void I2C_Interrupt(void)
 				I2caRegs.I2CMDR.all = 0xAC20;
 			}
 		}
+
 	} while (interruptSource != NONE);
 }
 

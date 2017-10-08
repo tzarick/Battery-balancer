@@ -9,6 +9,14 @@
 // Includes
 //-----------------------------------------------------------------------
 
+#include "BatteryController.h"
+#include "State.h"
+#include "CellStatus.h"
+#include "Timer.h"
+#include "SPI.h"
+#include "GPIO.h"
+#include "I2C_Coms.h"
+#include "Initialize.h"
 
 //-----------------------------------------------------------------------
 // Global variables

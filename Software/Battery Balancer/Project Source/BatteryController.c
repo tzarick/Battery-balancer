@@ -40,7 +40,7 @@ extern cell_t cells[CELLS_IN_SERIES];
 ///	Voltage difference threshold required to enable balancing for a cell.
 /// If a cell is not currently balancing, it must be more than
 /// BALANCE_ON_VOLT_TOL volts above the lowest cell in order to begin
-///being balanced.
+/// being balanced.
 #define BALANCE_ON_VOLT_TOL			(25) 	//mV
 
 /// Voltage difference threshold required to disable balancing for a cell.
@@ -86,7 +86,8 @@ void BatteryController_Task(void)
 	while(1)
 	{
 		I2C_Update();
-		state_t state = GetState();
+		state_t state = GetState();		//States 0x00E0 and 0x00FF show up for no apparent reason
+										//Valid States: WAIT, CHARGE, CHARGE_BALANCE, BALANCE, ERROR
 
 		if ((state == CHARGE) || (state == CHARGE_BALANCE))
 		{
@@ -113,18 +114,38 @@ void BatteryController_Task(void)
 			// as soon as no cells are balancing but we should wait for
 			// relaxation time before knowing for sure to leave this state
 			Bool doneBalancing = TRUE;
+			uint8_t cellCluster = 0;
+			int sendQueue = 0;
 
-			for (i = 0; i < CELLS_IN_SERIES; i++)
+			// cellCluster was an attempt to group SPI transmissions by driver - will probably require a complete redo
+			for (i = 1; i <= CELLS_IN_SERIES; i++)
 			{
 				if (batteryController_NeedsBalanced(&cells[i]))
 				{
 					cells[i].balance = TRUE;
 					doneBalancing = FALSE;
+					cellCluster++;
 				}
 				else
 				{
 					cells[i].balance = FALSE;
+					cellCluster++;
 				}
+				if (i % 8 == 0 && i != 0) {
+					SPI_PushToQueue(cellCluster, RELAYS);
+					SPI_SendTx(RELAYS);
+					sendQueue++;
+					cellCluster = 0;
+				} else if (i == CELLS_IN_SERIES) {
+					SPI_PushToQueue(cellCluster, RELAYS);
+					SPI_SendTx(RELAYS);
+					sendQueue++;
+					cellCluster = 0;
+				}
+				if (sendQueue % DRV8860_IN_SERIES == 0 && sendQueue != 0) {
+					//SPI_SendTx(RELAYS);
+				}
+				cellCluster <<= 1;
 			}
 			if (doneBalancing)
 			{
@@ -145,24 +166,32 @@ void BatteryController_Task(void)
 		{
 			//TEMPORARY
 
+			//Process front panel inputs- Find out which port is which
 			uint8_t expanderInputPort0 = I2C_GetPortInput(PORT_0);
 			uint8_t expanderInputPort1 = I2C_GetPortInput(PORT_1);
 		    uint16_t * testPtr = NULL;
 
 			/// Update SPI outputs
 			Uint16 i = 0;
+			//DRV8860 is the buffer length
+			//Send 2 Bytes (1 bit per relay) to each DRV8860s
 			for (i = 0; i < DRV8860_IN_SERIES; i++)
 			{
-				/// Open all relays
-				SPI_PushToQueue(0xFF, RELAYS);
+				/// Open all relays (1 == Close, 0 == Open)
+				SPI_PushToQueue(0xF1, RELAYS);
 			}
 			SPI_SendTx(RELAYS);
 
+
+
 			//SPI_DRV8860_GetFaults(testPtr, 1);
 
+			//Should trigger when START is pressed - Spoiler: It doesn't
 			if (expanderInputPort0 & START_BUTTON)
 			{
-				if (expanderInputPort0 & SWITCH_CHARGE_AND_BALANCE)
+				SetState(WAIT);
+
+				/*if (expanderInputPort0 & SWITCH_CHARGE_AND_BALANCE)
 				{
 					SetState(CHARGE_BALANCE);
 				}
@@ -176,7 +205,14 @@ void BatteryController_Task(void)
 					// Balance only mode
 					SetState(BALANCE);
 				}
+				*/
 			}
+			else if (expanderInputPort0 & STOP_BUTTON) {
+				SetState(WAIT);
+			}
+		}
+		else {
+			//todo: Handle Error State
 		}
 	}
 }

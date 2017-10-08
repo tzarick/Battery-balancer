@@ -50,13 +50,14 @@ Int main()
 
 	HardwareInit();
 
-	// @todo: Determine if I should keep default project code
 
+	// @todo: Determine if I should keep default project code
 
     BIOS_start();    /* does not return */
     return(0);
 }
 
+//This accomplishes the same thing as BatteryControllerTask - Why does this even exist?
 Void UpdateState()
 {
     uint16_t * testPtr = NULL;
@@ -85,10 +86,10 @@ Void UpdateState()
 				for (i = 0; i < DRV8860_IN_SERIES; i++)
 				{
 					/// Open all relays
-					SPI_PushToQueue(0xF, RELAYS);
+					SPI_PushToQueue(0xFF, RELAYS);
 				}
 				SPI_SendTx(RELAYS);
-
+				//DRV8860 is the buffer length or something like that
 				SPI_DRV8860_GetFaults(testPtr, 1);
 
 				if (expanderInputPort0 & START_BUTTON)
@@ -160,8 +161,8 @@ Void UpdateState()
 			case ERROR:
 			{
 				// Make system safe
-			}
 				break;
+			}
 			default:
 				// Error
 				break;

@@ -50,6 +50,9 @@ Void InitializeState()
 state_t GetState()
 {
 	// Check if initialized. Throw error if not.
+	//if(system_state.initialized != TRUE) {
+	//	system_state.balancer_state = ERROR;
+	//}
 	return system_state.balancer_state;
 }
 
@@ -57,14 +60,19 @@ Bool SetState(state_t nextState)
 {
 	// Semaphore for safety?
 	// Check for value of nextState to see if within bounds?
-	system_state.balancer_state = nextState;
-	return TRUE;
+	if (nextState == WAIT || nextState == CHARGE || nextState == CHARGE_BALANCE || nextState == BALANCE || nextState == ERROR) {
+		system_state.balancer_state = nextState;
+		return TRUE;
+	} else {
+		return FALSE;
+	}
 }
 
 
 //---------------------------------------------------------------------
 // SYS/BIOS Functions (USER SHOULD NOT CALL)
 //---------------------------------------------------------------------
+
 
 Void StateChangeTask()
 {
